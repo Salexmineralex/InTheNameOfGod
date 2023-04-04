@@ -8,4 +8,4 @@ set codeCoverageFile=%~7
 
 set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-cmd.exe" "%workspace%\%projectFilename%" -nosplash -Unattended -nopause  -NullRHI -nocontentbrowser -ExecCmds="Automation RunTests %testSuiteToRun%;quit" -TestExit="Automation Test Queue Empty" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName%
 
-"F:\OpenCppCoverage\OpenCppCoverage.exe" --sources=%workspace%\Source --modules %workspace% --excluded_sources=\Tests --export_type=cobertura:%codeCoverageFile%  -- %testRunnerCommand%
+"F:\OpenCppCoverage\OpenCppCoverage.exe" --sources=%workspace%\Source --modules %workspace% --excluded_sources=\Tests ----working_dir=%workspace% --export_type=cobertura:%codeCoverageFile%  -- %testRunnerCommand%
