@@ -19,11 +19,6 @@ pipeline {
     stage('Building') {
       steps {
         echo 'Build Stage Started.'
-        echo 'sending notification to Slack.'
-        slackSend channel: '#testing-ci', 
-          color: '#4A90E2',
-          message: "Build ${env.BUILD_NUMBER} has started at node ${env.NODE_NAME}..."
-
         bat "BuildWithoutCooking.bat \"${ue4Path}\" \"${env.WORKSPACE}\" \"${ueProjectFilename}\""//builds our project
       }
       post {
