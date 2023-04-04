@@ -106,16 +106,16 @@ def formatUnitTests() {
         testReportSummary = junit "${testReportFolder}\\junit.xml"
 }
 
-def convertTestsReport() {
-    def jsonReport = readFile file: "${testReportFolder}\\index.json", encoding: "UTF-8"
+//def convertTestsReport() {
+   //    def jsonReport = readFile file: "${testReportFolder}\\index.json", encoding: "UTF-8"
     // Needed because the JSON is encoded in UTF-8 with BOM
 
-    jsonReport = jsonReport.replace( "\uFEFF", "" );
+      // jsonReport = jsonReport.replace( "\uFEFF", "" );
+   //
+      // def xmlContent = transformReport( jsonReport )
 
-    def xmlContent = transformReport( jsonReport )
-
-    writeFile file: "${testReportFolder}\\junit.xml", text: xmlContent.toString()
-}
+      // writeFile file: "${testReportFolder}\\junit.xml", text: xmlContent.toString()
+   //}
 
 @NonCPS//atomic method
 def transformReport( String jsonContent ) {
