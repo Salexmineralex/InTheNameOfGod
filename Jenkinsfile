@@ -55,11 +55,7 @@ pipeline {
       bat "type ${pathToTestsLog}"
       echo 'Formatting TestsReport from JSon to JUnit XML'
       formatUnitTests()
-
-        slackSend channel: "#testing-ci",
-          color: '#c2f2d0',
-          message: "\n *Tests Report Summary* - Total Tests: ${testReportSummary.totalCount}, Failures: ${testReportSummary.failCount}, Skipped: ${testReportSummary.skipCount}, Passed: ${testReportSummary.passCount}"
-
+      
       echo "Publish Code Coverage Report."
       cobertura(coberturaReportFile:"${codeCoverageReportName}")
 
