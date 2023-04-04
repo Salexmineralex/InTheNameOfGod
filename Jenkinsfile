@@ -1,8 +1,8 @@
 pipeline {
   agent {
     node {
-      label 'master'
-      customWorkspace "D:\\CITestingWorkspace"//use backward slashes to avoid problems with how Windows uses directories!!
+      label 'controller'
+      customWorkspace "F:\\CITestingWorkspace"//use backward slashes to avoid problems with how Windows uses directories!!
     }
   }//^all this is necessary to run the build in a special workspace.
   environment {
