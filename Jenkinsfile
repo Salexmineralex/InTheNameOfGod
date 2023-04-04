@@ -6,7 +6,7 @@ pipeline {
     }
   }//^all this is necessary to run the build in a special workspace.
   environment {
-    ue4Path = "F:\UE_5.1"
+    ue4Path = "F:\\UE_5.1"
     ue4Project = "InTheNameOfGod"
     ueProjectFileName = "${ue4Project}.uproject"
     testSuiteToRun = "Game."//the '.' is used to run all tests inside the prettyname. The automation system searches for everything that has 'Game.' in it, so otherGame.'s tests would run too...
