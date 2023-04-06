@@ -7,6 +7,6 @@ set testsLogName=%~6
 set codeCoverageFile=%~7
 
 //
-set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -run=Automation -Device=Null -nullrhi -unattended -TestExit="" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName% -multiprocess -WaitForExit
+set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -run=Automation -Device=Null -nullrhi -unattended -TestExit="" -ReportOutputPath="%workspace%\Saved\UnitTestsReport" -log -Log=%testsLogName% -multiprocess
 
 C:\OpenCppCoverage64\OpenCppCoverage\OpenCppCoverage.exe   --sources=%workspace%\Source --excluded_sources=\Tests --modules %workspace% --export_type=cobertura:%codeCoverageFile% --working_dir=F:\CITestingWorkspace\ -- %testRunnerCommand%
