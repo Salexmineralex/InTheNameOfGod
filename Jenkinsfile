@@ -99,8 +99,6 @@ def formatUnitTests() {
 
 def convertTestsReport() {
        def jsonReport = readFile file: "${testReportFolder}\\index.json", encoding: "UTF-8"
-     Needed because the JSON is encoded in UTF-8 with BOM
-
        jsonReport = jsonReport.replace( "\uFEFF", "" );
    
        def xmlContent = transformReport( jsonReport )
