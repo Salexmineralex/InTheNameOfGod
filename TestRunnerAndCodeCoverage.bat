@@ -6,15 +6,6 @@ set testReportFolder=%~5
 set testsLogName=%~6
 set codeCoverageFile=%~7
 
-//set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -nosplash -Unattended -nopause  -NullRHI -nocontentbrowser  -ExecCmds="Automation RunTests %testSuiteToRun%;quit" -TestExit="Automation Test Queue Empty" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName%
-
-//set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -nosplash -Unattended -nopause -NullRHI -nocontentbrowser  ExecCmds="Automation RunTests;quit" -TestExit="Automation Test Queue Empty" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName% -WaitForExit
-
-//set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -nosplash -Unattended -nopause -NullRHI -nocontentbrowser  ExecCmds="Automation RunTests;quit" -TestExit="" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName% -WaitForExit
-
-//set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -nosplash -Unattended -nopause -NullRHI -nocontentbrowser -TestExit="Automation Test Queue Empty" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName% -WaitForExit
-
-//set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -nosplash -Unattended -nopause -nocontentbrowser -TestExit="Automation Test Queue Empty" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName% -WaitForExit
 
 set testRunnerCommand="%ue4Location%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%workspace%\%projectFilename%" -run=Automation -Device=Null -nullrhi -unattended -TestExit="" -ReportOutputPath="%workspace%\%testReportFolder%" -log -Log=%testsLogName% -multiprocess -WaitForExit
 
