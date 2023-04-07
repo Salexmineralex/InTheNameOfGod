@@ -19,6 +19,7 @@ pipeline {
     stage('Building') {
       steps {
         echo 'Build Stage Started.'
+        discordSend description: "Jenkins Pipeline Build ${appName}", footer: "Start Build", link: "$BUILD_URL", result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093807922124959764/lDjxAT15dNYyoTXhZaptmKHUTAiR1c01HF7H-PRiVx1EjN9mMr-SGw-N1IVftSv038ej"// Webhook url discord
         bat "BuildWithoutCooking.bat \"${ue4Path}\" \"${env.WORKSPACE}\" \"${ueProjectFilename}\""//builds our project
       }
       post {
