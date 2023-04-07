@@ -70,19 +70,15 @@ pipeline {
       //^echo 'Sending build status notification to Slack:'
     }
     success{
-        //^slackSend channel: '#testing-ci',
-          //^color: 'good', 
-          //^message: "*${currentBuild.currentResult}:* Build ${env.BUILD_NUMBER} has *succeded!* :innocent:"
+      echo "success"
+ 
     }
     unstable{
-        //^slackSend channel: '#testing-ci',
-          //^color: '#E2A52E', 
-         //^ message: "*${currentBuild.currentResult}:* Build ${env.BUILD_NUMBER} it's *unstable!* :grimacing:"
+      echo "unesatable"
+
     }
     failure{
-        //^slackSend channel: '#testing-ci',
-          //^color: 'danger', 
-          //^message: "*${currentBuild.currentResult}:* Build ${env.BUILD_NUMBER} has *failed* :astonished:"
+       echo "failure"
     }
   }
 }
