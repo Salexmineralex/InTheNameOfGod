@@ -19,16 +19,18 @@ pipeline {
     stage('Building') {
       steps {
         echo 'Build Stage Started.'
-       
-       discordSend description: "Jenkins Pipeline Build", footer: "Footer Text", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093807922124959764/lDjxAT15dNYyoTXhZaptmKHUTAiR1c01HF7H-PRiVx1EjN9mMr-SGw-N1IVftSv038ej"
+      
         bat "BuildWithoutCooking.bat \"${ue4Path}\" \"${env.WORKSPACE}\" \"${ueProjectFilename}\""//builds our project
       }
       post {
         success {
           echo 'Build Stage Successful.'
+          discordSend description: "Build Stage Successful.", footer: "Nice Job", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
         }
         failure {
           echo 'Build Stage Unsuccessful.'
+          discordSend description: "Build Stage Unsuccessful.", footer: "Check Repository", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
+
         }
       }
     }
@@ -42,9 +44,12 @@ pipeline {
       post {
         success {
           echo 'Testing Stage Successful.'
+          discordSend description: "Testing Stage Successful.", footer: "Nice Job", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
         }
         failure {
           echo 'Testing Stage Unsuccessful.'
+          discordSend description: "Testing Stage Unsuccessful.", footer: "Check Repository", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
+
         }
       }
     }
@@ -73,14 +78,17 @@ pipeline {
     }
     success{
       echo "success"
- 
+      discordSend description: "Nice Commit, All works fine", footer: "Yeah", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
+
     }
     unstable{
       echo "unesatable"
+      discordSend description: "Something is Wrong, check it", footer: "Meh", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
 
     }
     failure{
        echo "failure"
+       discordSend description: "Complete failure", footer: "Check Repository", link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: "https://discord.com/api/webhooks/1093811094176415795/uZuyX_3JDmiGEQFd5mVlpn5-WQ2gVSyE0nEh0od5w-NesbdvThrqXVSHCbzM8nwvkvXO"
     }
   }
 }
