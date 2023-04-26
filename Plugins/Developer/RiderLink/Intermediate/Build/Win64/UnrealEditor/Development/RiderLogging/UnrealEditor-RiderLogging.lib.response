@@ -6,6 +6,6 @@
 /NAME:"UnrealEditor-RiderLogging.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"D:\Programacion de Videojuegos 2022-2023\UnrealEngine\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
-"D:\Programacion de Videojuegos 2022-2023\UnrealEngine\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
-/OUT:"D:\Programacion de Videojuegos 2022-2023\UnrealEngine\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"
+"C:\ProyectosUnreal\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
+"C:\ProyectosUnreal\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
+/OUT:"C:\ProyectosUnreal\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"
