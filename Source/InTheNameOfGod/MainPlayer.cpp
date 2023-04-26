@@ -3,6 +3,8 @@
 
 #include "MainPlayer.h"
 
+#include "EnhancedInputComponent.h"
+
 // Sets default values
 AMainPlayer::AMainPlayer()
 {
@@ -30,10 +32,36 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	//Moving
+	// Set up action bindings
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
+		
+		//Moving
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AMainPlayer::StopMoving);
+
+	}
+
+
 
 }
 
-void AMainPlayer::StopMoving()
+void AMainPlayer::Move(const FInputActionValue& Value)
 {
+	Super::Move(Value);
+
+	FVector2d VectorMovement = Value.Get<FVector2d>();
+	
+	if(VectorMovement.Y > 0 && GetCurrentMontage() != walkAnimMontage)
+	{
+		PlayAnimMontage(this->walkAnimMontage);	
+	}
+	
 }
+
+void AMainPlayer::StopMoving(const FInputActionValue& Value)
+{
+	StopAnimMontage(GetCurrentMontage());
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("StopMoving"));
+}
+
 

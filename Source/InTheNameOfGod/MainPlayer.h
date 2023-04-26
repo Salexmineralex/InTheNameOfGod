@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "TP_ThirdPerson/TP_ThirdPersonCharacter.h"
 #include "MainPlayer.generated.h"
 
 UCLASS()
-class INTHENAMEOFGOD_API AMainPlayer : public ACharacter
+class INTHENAMEOFGOD_API AMainPlayer : public ATP_ThirdPersonCharacter
 {
 	GENERATED_BODY()
 
@@ -15,12 +16,17 @@ public:
 	// Sets default values for this character's properties
 	AMainPlayer();
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* walkAnimMontage;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
-	void StopMoving();
+	void Move(const FInputActionValue& Value) override;
+
+	void StopMoving(const FInputActionValue& Value);
+
 
 public:	
 	// Called every frame
