@@ -18,7 +18,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* walkAnimMontage;
-
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> swordMesh;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

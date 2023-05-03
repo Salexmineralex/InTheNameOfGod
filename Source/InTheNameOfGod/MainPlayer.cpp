@@ -10,6 +10,11 @@ AMainPlayer::AMainPlayer()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	this->swordMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("swordMesh"));
+	swordMesh->SetupAttachment(RootComponent);
+	
+	
 
 }
 
@@ -17,7 +22,14 @@ AMainPlayer::AMainPlayer()
 void AMainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FTransform swordtr =  GetMesh()->GetSocketTransform("sword_socket",RTS_World);
 	
+	GEngine->AddOnScreenDebugMessage(-1, 135.0f, FColor::Yellow, FString::Printf(TEXT("%f | %f | %f"),swordtr.GetLocation().X,swordtr.GetLocation().Y,swordtr.GetLocation().Z));
+
+	swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true),"sword_socket");
+	
+	swordMesh->SetWorldTransform(swordtr);
 }
 
 // Called every frame
