@@ -25,7 +25,6 @@ void AMainPlayer::BeginPlay()
 
 	FTransform swordtr =  GetMesh()->GetSocketTransform("sword_socket",RTS_World);
 	
-	GEngine->AddOnScreenDebugMessage(-1, 135.0f, FColor::Yellow, FString::Printf(TEXT("%f | %f | %f"),swordtr.GetLocation().X,swordtr.GetLocation().Y,swordtr.GetLocation().Z));
 
 	swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true),"sword_socket");
 	
@@ -48,8 +47,12 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
-		//Moving
+		//StopMoving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AMainPlayer::StopMoving);
+
+		//Attack
+		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &AMainPlayer::Attack);
+		
 
 	}
 
@@ -74,6 +77,16 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 {
 	StopAnimMontage(GetCurrentMontage());
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("StopMoving"));
+}
+
+void AMainPlayer::Attack(const FInputActionValue& Value)
+{
+	if(GetCurrentMontage() != Attack1AnimMontage)
+	{
+		PlayAnimMontage(this->Attack1AnimMontage);
+	}
+
+	
 }
 
 
