@@ -22,6 +22,9 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* Attack1AnimMontage;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* Attack2AnimMontage;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> swordMesh;
@@ -29,6 +32,10 @@ public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* PrimaryAction;
+
+	/** Look Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SecondaryAction;
 	
 protected:
 	// Called when the game starts or when spawned
@@ -39,6 +46,8 @@ protected:
 	void StopMoving(const FInputActionValue& Value);
 	
 	void Attack(const FInputActionValue& Value);
+	
+	void Secondary_Attack(const FInputActionValue& Value);
 
 
 public:	

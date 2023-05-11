@@ -52,6 +52,9 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 		//Attack
 		EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Started, this, &AMainPlayer::Attack);
+
+		//Secondary Attack
+		EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Started, this, &AMainPlayer::Secondary_Attack);
 		
 
 	}
@@ -87,6 +90,16 @@ void AMainPlayer::Attack(const FInputActionValue& Value)
 	}
 
 	
+}
+
+void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
+{
+	
+	if(GetCurrentMontage() != Attack1AnimMontage)
+	{
+		PlayAnimMontage(this->Attack2AnimMontage);
+	}
+
 }
 
 
