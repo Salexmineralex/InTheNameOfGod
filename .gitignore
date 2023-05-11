@@ -76,4 +76,4 @@ DerivedDataCache/*
 
 #BatFiles
 *.bat
-Jenkinsfile
+Jenkinsfile.txt
