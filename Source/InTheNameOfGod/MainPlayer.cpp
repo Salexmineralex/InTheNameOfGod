@@ -95,7 +95,7 @@ void AMainPlayer::Attack(const FInputActionValue& Value)
 void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 {
 	
-	if(GetCurrentMontage() != Attack1AnimMontage)
+	if(GetCurrentMontage() != Attack2AnimMontage)
 	{
 		PlayAnimMontage(this->Attack2AnimMontage);
 	}
