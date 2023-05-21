@@ -6,6 +6,6 @@
 /NAME:"UnrealEditor-RiderLogging-Win64-DebugGame.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\danif\Documents\GitHub\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderLogging\Module.RiderLogging.cpp.obj"
-"C:\Users\danif\Documents\GitHub\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderLogging\Default.rc2.res"
-/OUT:"C:\Users\danif\Documents\GitHub\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderLogging\UnrealEditor-RiderLogging-Win64-DebugGame.lib"
+"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderLogging\Module.RiderLogging.cpp.obj"
+"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderLogging\Default.rc2.res"
+/OUT:"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderLogging\UnrealEditor-RiderLogging-Win64-DebugGame.lib"
