@@ -6,6 +6,6 @@
 /NAME:"UnrealEditor-RiderShaderInfo.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"D:\Programacion de Videojuegos 2022-2023\UnrealEngine\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
-"D:\Programacion de Videojuegos 2022-2023\UnrealEngine\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\Default.rc2.res"
-/OUT:"D:\Programacion de Videojuegos 2022-2023\UnrealEngine\UnrealEngine5\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\UnrealEditor-RiderShaderInfo.lib"
+"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\Default.rc2.res"
+/OUT:"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\UnrealEditor-RiderShaderInfo.lib"
