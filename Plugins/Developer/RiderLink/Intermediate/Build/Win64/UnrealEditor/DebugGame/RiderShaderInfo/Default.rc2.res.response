@@ -70,5 +70,5 @@
 /DPROJECT_COPYRIGHT_STRING="Fill out your copyright notice in the Description page of Project Settings."
 /DPROJECT_PRODUCT_NAME="Third Person BP Game Template"
 /DPROJECT_PRODUCT_IDENTIFIER=InTheNameOfGod
-/fo "C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\Default.rc2.res"
+/fo "D:\Documentos\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\Default.rc2.res"
 "..\Build\Windows\Resources\Default.rc2"

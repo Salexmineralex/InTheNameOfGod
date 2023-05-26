@@ -16,11 +16,11 @@ ABaseEnemy::ABaseEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//Components
-	rootComponent=CreateDefaultSubobject<USceneComponent>(TEXT("rootComponent"));
-	SetRootComponent(rootComponent);
+	//rootComponent=CreateDefaultSubobject<USceneComponent>(TEXT("rootComponent"));
+	//SetRootComponent(rootComponent);
 	
 	skeletalMesh=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("skeletalMesh"));
-	skeletalMesh->SetupAttachment(rootComponent);
+	skeletalMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

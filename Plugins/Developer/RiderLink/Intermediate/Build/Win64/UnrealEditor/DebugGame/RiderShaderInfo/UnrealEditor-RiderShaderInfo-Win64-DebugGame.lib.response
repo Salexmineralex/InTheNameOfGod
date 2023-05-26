@@ -6,6 +6,6 @@
 /NAME:"UnrealEditor-RiderShaderInfo-Win64-DebugGame.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\RiderShaderInfo.cpp.obj"
-"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\Default.rc2.res"
-/OUT:"C:\Users\danif\Documents\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\UnrealEditor-RiderShaderInfo-Win64-DebugGame.lib"
+"D:\Documentos\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+"D:\Documentos\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\Default.rc2.res"
+/OUT:"D:\Documentos\TheCoreSchool\TFM\Project\InTheNameOfGod\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\DebugGame\RiderShaderInfo\UnrealEditor-RiderShaderInfo-Win64-DebugGame.lib"

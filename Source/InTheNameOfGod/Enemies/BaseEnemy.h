@@ -33,7 +33,7 @@ public:
 	//Components
 private:
 
-	USceneComponent* rootComponent{ nullptr };
+	//USceneComponent* rootComponent{ nullptr };
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* skeletalMesh {nullptr};
 
