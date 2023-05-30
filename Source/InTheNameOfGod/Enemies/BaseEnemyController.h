@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+
 #include "BaseEnemyController.generated.h"
 
 
 class ACharacter;
+class UBlackboard;
 /**
  * 
  */
@@ -15,11 +17,11 @@ UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
 	GENERATED_BODY()
-		virtual void BeginPlay()override ;
+		//virtual void BeginPlay()override ; se hace el begin play con blueprints
 
 private:
-	UPROPERTY(EditDefaultsOnly,meta = (AllowPrivateAccess ="true"))
-	UBehaviorTree* behaviorTree{nullptr};
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (AllowPrivateAccess ="true"))
+		TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
 
 	ACharacter* target{ nullptr };
 
@@ -28,5 +30,10 @@ private:
 public://tasks
 	UFUNCTION(Category = Tasks)
 	void UpdateNextTargetPoint();
+
+	//protected:
+	UFUNCTION(BlueprintCallable)
+	void GetAllWayPoints();
+
 
 };

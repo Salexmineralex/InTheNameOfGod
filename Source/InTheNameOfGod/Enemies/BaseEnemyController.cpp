@@ -11,15 +11,7 @@
 //project
 #include "InTheNameOfGod/AI/WayPoint.h"
 
-void ABaseEnemyController::BeginPlay()
-{
-	RunBehaviorTree(behaviorTree);
 
-	TArray<AActor*> allWayPoints;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(),AWayPoint::StaticClass(), allWayPoints);
-	wayPointsAmount = allWayPoints.Num();
-	//GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("%d"), wayPointsAmount));
-}
 
 void ABaseEnemyController::UpdateNextTargetPoint()
 {
@@ -42,5 +34,11 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 		}
 	}
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
+}
+void ABaseEnemyController::GetAllWayPoints()
+{
+	TArray<AActor*> allWayPoints;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWayPoint::StaticClass(), allWayPoints);
+	wayPointsAmount = allWayPoints.Num();
 }
 
