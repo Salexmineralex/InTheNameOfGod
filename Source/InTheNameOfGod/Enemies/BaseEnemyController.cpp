@@ -7,10 +7,19 @@
 #include "Kismet/GameplayStatics.h"
 #include "BrainComponent.h"
 #include "EngineUtils.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "GameFramework/Character.h"
+
 
 //project
 #include "InTheNameOfGod/AI/WayPoint.h"
 
+void ABaseEnemyController::GetAllWayPoints()
+{
+	TArray<AActor*> allWayPoints;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWayPoint::StaticClass(), allWayPoints);
+	wayPointsAmount = allWayPoints.Num();
+}
 
 
 void ABaseEnemyController::UpdateNextTargetPoint()
@@ -35,10 +44,51 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 	}
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
 }
-void ABaseEnemyController::GetAllWayPoints()
+
+
+void ABaseEnemyController::ChecknearbyEnemy()
 {
-	TArray<AActor*> allWayPoints;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWayPoint::StaticClass(), allWayPoints);
-	wayPointsAmount = allWayPoints.Num();
+	FVector start = GetPawn()->GetActorLocation();
+	FVector end = start + FVector(0, 0, 50.f);
+	//a que objetos les hace caso
+	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
+	objectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+
+	TArray<AActor*> actorsToIgnore;
+	actorsToIgnore.Add(GetPawn());
+
+	TArray<FHitResult> outHits;
+
+	bool someActorClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
+		GetWorld(), start, end, 2500,objectTypes , false, actorsToIgnore,EDrawDebugTrace::ForDuration, outHits,true);
+
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	if (someActorClose)
+	{
+
+		ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		for (FHitResult current: outHits)
+		{
+			if (current.GetActor() == player)
+			{
+				myBlackboard->SetValueAsObject("TargetActorToFollow", player);
+				break;
+			}
+		}
+	}
+	else
+	{
+		myBlackboard->SetValueAsObject("TargetActorToFollow", NULL);
+
+	}
+}
+EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
+{
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	AActor* playerActor = Cast<AActor>(myBlackboard->GetValueAsObject("TargetActorToFollow"));
+	
+	EPathFollowingRequestResult::Type moveToActorResult = MoveToActor(playerActor);
+
+	return moveToActorResult;
 }
 

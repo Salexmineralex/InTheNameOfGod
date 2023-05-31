@@ -30,6 +30,12 @@ private:
 public://tasks
 	UFUNCTION(Category = Tasks)
 	void UpdateNextTargetPoint();
+	UFUNCTION(BlueprintCallable, Category = Tasks)
+		EPathFollowingRequestResult::Type MoveToPlayer();
+
+	//Services
+	UFUNCTION(Category = Services)
+	void ChecknearbyEnemy();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)
