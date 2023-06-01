@@ -7,6 +7,18 @@
 #include "TP_ThirdPerson/TP_ThirdPersonCharacter.h"
 #include "MainPlayer.generated.h"
 
+
+	
+UENUM(BlueprintType)
+enum class EAttackAnimationsCombo : uint8
+{
+	defaults UMETA(Hidden),
+	StartAnim  UMETA(DisplayName = "StartAnim"),
+	Combo1 UMETA(DisplayName = "Combo1"),
+	Combo2 UMETA(DisplayName = "Combo2"),
+    	
+};
+
 UCLASS()
 class INTHENAMEOFGOD_API AMainPlayer : public ATP_ThirdPersonCharacter
 {
@@ -16,15 +28,16 @@ public:
 	// Sets default values for this character's properties
 	AMainPlayer();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimationsPool")
+	TMap<EAttackAnimationsCombo, UAnimMontage*> MyAnimationPool;
+	
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* walkAnimMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackAnimationsCombo lightCombo = EAttackAnimationsCombo::StartAnim;
 	
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* Attack1AnimMontage;
-
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* Attack2AnimMontage;
+	EAttackAnimationsCombo strongCombo = EAttackAnimationsCombo::StartAnim;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> swordMesh;

@@ -84,20 +84,18 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
 {
-	if(GetCurrentMontage() != Attack1AnimMontage)
+	if(GetCurrentMontage() != MyAnimationPool[lightCombo])
 	{
-		PlayAnimMontage(this->Attack1AnimMontage);
+		PlayAnimMontage(MyAnimationPool[lightCombo]);
 	}
-
-	
 }
 
 void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 {
 	
-	if(GetCurrentMontage() != Attack2AnimMontage)
+	if(GetCurrentMontage() != MyAnimationPool[strongCombo])
 	{
-		PlayAnimMontage(this->Attack2AnimMontage);
+		PlayAnimMontage(this->MyAnimationPool[strongCombo]);
 	}
 
 }
