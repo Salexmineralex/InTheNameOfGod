@@ -6,11 +6,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c64594e5-a464-4588-b876-6b9737562120" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Content/Characters/MainChar/Animations/ComboAttackAnimations/Combo1/AM_ComboAttack1_2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/MainChar/Animations/ComboAttackAnimations/Combo1/AM_ComboAttack1_2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/MainChar/PlayerModel/SK_Chr_Priest_Male_01_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/MainChar/PlayerModel/SK_Chr_Priest_Male_01_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/FileSystemMappings.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/FileSystemMappings.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/InTheNameOfGod/LifeComponent.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/InTheNameOfGod/LifeComponent.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.InTheNameOfGod/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.InTheNameOfGod/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RD-Win64-DebugGame.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RD-Win64-DebugGame.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderBlueprint-Win64-DebugGame.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderBlueprint-Win64-DebugGame.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderGameControl-Win64-DebugGame.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderGameControl-Win64-DebugGame.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLink-Win64-DebugGame.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLink-Win64-DebugGame.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLogging-Win64-DebugGame.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderLogging-Win64-DebugGame.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderShaderInfo-Win64-DebugGame.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Binaries/Win64/UnrealEditor-RiderShaderInfo-Win64-DebugGame.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RD/UnrealEditor-RD-Win64-DebugGame.exp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RD/UnrealEditor-RD-Win64-DebugGame.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderBlueprint/UnrealEditor-RiderBlueprint-Win64-DebugGame.exp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderBlueprint/UnrealEditor-RiderBlueprint-Win64-DebugGame.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderGameControl/UnrealEditor-RiderGameControl-Win64-DebugGame.exp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderGameControl/UnrealEditor-RiderGameControl-Win64-DebugGame.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderLink/UnrealEditor-RiderLink-Win64-DebugGame.exp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderLink/UnrealEditor-RiderLink-Win64-DebugGame.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderLogging/UnrealEditor-RiderLogging-Win64-DebugGame.exp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderLogging/UnrealEditor-RiderLogging-Win64-DebugGame.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderShaderInfo/UnrealEditor-RiderShaderInfo-Win64-DebugGame.exp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Developer/RiderLink/Intermediate/Build/Win64/UnrealEditor/DebugGame/RiderShaderInfo/UnrealEditor-RiderShaderInfo-Win64-DebugGame.exp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,6 +183,7 @@
       <workItem from="1685531436205" duration="3210000" />
       <workItem from="1685600787812" duration="5577000" />
       <workItem from="1685609985961" duration="1045000" />
+      <workItem from="1685616285092" duration="648000" />
     </task>
     <servers />
   </component>
