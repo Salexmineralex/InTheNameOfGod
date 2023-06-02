@@ -19,6 +19,16 @@ enum class EAttackAnimationsCombo : uint8
     	
 };
 
+UENUM(BlueprintType)
+enum class EAttackInputCombo : uint8
+{
+	defaults UMETA(Hidden),
+	Light  UMETA(DisplayName = "Light"),
+	Strong UMETA(DisplayName = "Strong"),
+	
+    	
+};
+
 UCLASS()
 class INTHENAMEOFGOD_API AMainPlayer : public ATP_ThirdPersonCharacter
 {
@@ -28,7 +38,12 @@ public:
 	// Sets default values for this character's properties
 	AMainPlayer();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimationsPool")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> swordMesh;
+
+#pragma region Animation
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	TMap<EAttackAnimationsCombo, UAnimMontage*> MyAnimationPool;
 	
 	UPROPERTY(EditAnywhere)
@@ -38,9 +53,19 @@ public:
 	EAttackAnimationsCombo lightCombo = EAttackAnimationsCombo::StartAnim;
 	
 	EAttackAnimationsCombo strongCombo = EAttackAnimationsCombo::StartAnim;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<USkeletalMeshComponent> swordMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool canAttack = true;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Animation")
+	TArray<EAttackInputCombo> inputArray;
+
+	UFUNCTION( BlueprintNativeEvent,BlueprintCallable , Category = "Animation" )
+	void StartCombo(const TArray<EAttackInputCombo> &inputsArray);
+
+#pragma endregion Animation
+
+#pragma region Input
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -49,6 +74,8 @@ public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* SecondaryAction;
+
+
 	
 protected:
 	// Called when the game starts or when spawned
@@ -62,12 +89,16 @@ protected:
 	
 	void Secondary_Attack(const FInputActionValue& Value);
 
-
+#pragma endregion Input
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UFUNCTION(BlueprintCallable,meta=(ExpandEnumAsExecs="input"))
+	void SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage,EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput);
 
 };

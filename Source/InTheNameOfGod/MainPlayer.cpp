@@ -84,20 +84,69 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
 {
-	if(GetCurrentMontage() != MyAnimationPool[lightCombo])
+
+	if(canAttack)
 	{
-		PlayAnimMontage(MyAnimationPool[lightCombo]);
+		canAttack = false;
+		inputArray.Push(EAttackInputCombo::Light);
+		TArray<EAttackInputCombo> copyinput;
+		copyinput.Append(inputArray);
+		StartCombo_Implementation(copyinput);
+
 	}
+	
+	// if(GetCurrentMontage() != MyAnimationPool[lightCombo])
+	// {
+	// 	PlayAnimMontage(MyAnimationPool[lightCombo]);
+	// }
 }
 
 void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 {
-	
-	if(GetCurrentMontage() != MyAnimationPool[strongCombo])
+	if(canAttack)
 	{
-		PlayAnimMontage(this->MyAnimationPool[strongCombo]);
+		canAttack = false;
+		inputArray.Push(EAttackInputCombo::Strong);
+		TArray<EAttackInputCombo> copyinput;
+		copyinput.Append(inputArray);
+		StartCombo_Implementation(copyinput);
 	}
+	// if(GetCurrentMontage() != MyAnimationPool[strongCombo])
+	// {
+	// 	PlayAnimMontage(this->MyAnimationPool[strongCombo]);
+	// }
 
 }
 
+void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inputsArray)
+{
+	StartCombo(inputsArray);
+}
+
+
+
+
+void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage, EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput)
+{
+
+	
+	
+	if( inputs.Num() > 0)
+	{// if(montage == nullptr)
+     	// {
+     	// 	input = inputs[0];
+     	// 	inputs.RemoveAt(0);
+     	// 	outputInput = inputs;
+     	// }
+		input = inputs[0];
+		inputs.RemoveAt(0);
+		outputInput = inputs;
+	}
+	
+	if(inputs.Num() == 0 && montage)
+	{
+		
+		PlayAnimMontage(montage);
+	}
+}
 
