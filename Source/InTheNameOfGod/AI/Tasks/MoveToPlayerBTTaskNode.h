@@ -19,5 +19,4 @@ class INTHENAMEOFGOD_API UMoveToPlayerBTTaskNode : public UBTTaskNode
 
 	virtual FString GetStaticDescription()const override;
 
-	
 };

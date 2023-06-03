@@ -22,6 +22,8 @@ void ABaseEnemyController::GetAllWayPoints()
 }
 
 
+
+
 void ABaseEnemyController::UpdateNextTargetPoint()
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
@@ -45,11 +47,21 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
 }
 
+void ABaseEnemyController::ResetBlackBoardKeyValue(FBlackboardKeySelector key)
+{
+	UBlackboardComponent* blackboard = BrainComponent->GetBlackboardComponent();
+
+	FVector EmptyVectorArray;
+
+	blackboard->SetValueAsVector("LastPlayerPosKnown", EmptyVectorArray);
+}
+
+
 
 void ABaseEnemyController::ChecknearbyEnemy()
 {
 	FVector start = GetPawn()->GetActorLocation();
-	FVector end = start + FVector(0, 0, 50.f);
+	FVector end = start + FVector(0, 0, 15.f);
 	//a que objetos les hace caso
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
 	objectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
@@ -60,7 +72,7 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	TArray<FHitResult> outHits;
 
 	bool someActorClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
-		GetWorld(), start, end, 2500,objectTypes , false, actorsToIgnore,EDrawDebugTrace::ForDuration, outHits,true);
+		GetWorld(), start, end, 1500,objectTypes , false, actorsToIgnore,EDrawDebugTrace::ForDuration, outHits,true);
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	if (someActorClose)
@@ -82,6 +94,17 @@ void ABaseEnemyController::ChecknearbyEnemy()
 
 	}
 }
+
+
+void ABaseEnemyController::SaveLastPlayerPosition()
+{
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	AActor* playerActor = Cast<AActor>(myBlackboard->GetValueAsObject("TargetActorToFollow"));
+
+	myBlackboard->SetValueAsVector("LastPlayerPosKnown", playerActor->GetActorLocation());
+}
+
+
 EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();

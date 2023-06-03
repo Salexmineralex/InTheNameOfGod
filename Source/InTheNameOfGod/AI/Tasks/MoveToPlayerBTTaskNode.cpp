@@ -8,6 +8,7 @@
 
 void UMoveToPlayerBTTaskNode::TickTask(class UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	ABaseEnemyController* control = Cast<ABaseEnemyController>(OwnerComp.GetOwner());
 	EPathFollowingRequestResult::Type MoveToActorResult = control->MoveToPlayer();
 

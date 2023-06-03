@@ -32,14 +32,20 @@ public://tasks
 	void UpdateNextTargetPoint();
 	UFUNCTION(BlueprintCallable, Category = Tasks)
 		EPathFollowingRequestResult::Type MoveToPlayer();
+	UFUNCTION( Category = Tasks)
+		void ResetBlackBoardKeyValue(FBlackboardKeySelector key);
 
 	//Services
 	UFUNCTION(Category = Services)
 	void ChecknearbyEnemy();
+	UFUNCTION(Category = Services)
+	void SaveLastPlayerPosition();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)
 	void GetAllWayPoints();
+
+
 
 
 };
