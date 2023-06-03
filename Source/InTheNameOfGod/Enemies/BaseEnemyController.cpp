@@ -29,6 +29,17 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	int32 idIndex = myBlackboard->GetValueAsInt("WayPointIndex");
 
+	if (!hasCheckLastPlayerPosition)
+	{
+		hasCheckLastPlayerPosition = true;
+		FVector newPos = myBlackboard->GetValueAsVector("LastPlayerPosKnown");
+		myBlackboard->SetValueAsVector("WayPointPosition",newPos);
+		myBlackboard->SetValueAsBool("HolaBuenas", hasCheckLastPlayerPosition);
+
+		return;
+	}
+
+
 	if (idIndex >= wayPointsAmount)
 	{
 		idIndex = 0;
@@ -44,17 +55,12 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 			break;
 		}
 	}
+	myBlackboard->SetValueAsBool("HolaBuenas", hasCheckLastPlayerPosition);
+
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
 }
 
-void ABaseEnemyController::ResetBlackBoardKeyValue(FBlackboardKeySelector key)
-{
-	UBlackboardComponent* blackboard = BrainComponent->GetBlackboardComponent();
 
-	FVector EmptyVectorArray;
-
-	blackboard->SetValueAsVector("LastPlayerPosKnown", EmptyVectorArray);
-}
 
 
 
@@ -98,8 +104,10 @@ void ABaseEnemyController::ChecknearbyEnemy()
 
 void ABaseEnemyController::SaveLastPlayerPosition()
 {
+	hasCheckLastPlayerPosition = false;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	AActor* playerActor = Cast<AActor>(myBlackboard->GetValueAsObject("TargetActorToFollow"));
+	myBlackboard->SetValueAsBool("HolaBuenas", hasCheckLastPlayerPosition);
 
 	myBlackboard->SetValueAsVector("LastPlayerPosKnown", playerActor->GetActorLocation());
 }
