@@ -60,8 +60,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Animation")
 	TArray<EAttackInputCombo> inputArray;
 
-	UFUNCTION( BlueprintNativeEvent,BlueprintCallable , Category = "Animation" )
-	void StartCombo(const TArray<EAttackInputCombo> &inputsArray);
+
 
 #pragma endregion Animation
 
@@ -94,6 +93,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+	UFUNCTION( BlueprintNativeEvent,BlueprintCallable , Category = "Animation" )
+	void StartCombo(const TArray<EAttackInputCombo> &inputsArray);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

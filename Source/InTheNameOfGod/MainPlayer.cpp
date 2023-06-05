@@ -111,6 +111,7 @@ void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 		copyinput.Append(inputArray);
 		StartCombo_Implementation(copyinput);
 	}
+
 	// if(GetCurrentMontage() != MyAnimationPool[strongCombo])
 	// {
 	// 	PlayAnimMontage(this->MyAnimationPool[strongCombo]);
@@ -120,7 +121,9 @@ void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 
 void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inputsArray)
 {
+	
 	StartCombo(inputsArray);
+	
 }
 
 
@@ -129,24 +132,27 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage, EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput)
 {
 
-	
-	
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
+
+	if(inputs.Num() == 0 && montage)
+	{
+		PlayAnimMontage(montage);
+		input = EAttackInputCombo::defaults;
+
+	}
+
 	if( inputs.Num() > 0)
-	{// if(montage == nullptr)
-     	// {
-     	// 	input = inputs[0];
-     	// 	inputs.RemoveAt(0);
-     	// 	outputInput = inputs;
-     	// }
+	{
+	
 		input = inputs[0];
 		inputs.RemoveAt(0);
 		outputInput = inputs;
+
 	}
+
 	
-	if(inputs.Num() == 0 && montage)
-	{
-		
-		PlayAnimMontage(montage);
-	}
+	
 }
+
+
 

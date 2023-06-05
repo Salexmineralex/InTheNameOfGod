@@ -12,6 +12,9 @@ public class InTheNameOfGod : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "EnhancedInput", "EnhancedInput" });
 
+		PrivateIncludePaths.AddRange(new string[] { "InTheNameOfGod" }); // Add the path to your custom node class file
+
+		
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
