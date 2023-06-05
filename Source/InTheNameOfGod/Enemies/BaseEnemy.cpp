@@ -5,6 +5,8 @@
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
+
 
 
 
@@ -21,13 +23,18 @@ ABaseEnemy::ABaseEnemy()
 	
 	skeletalMesh=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("skeletalMesh"));
 	skeletalMesh->SetupAttachment(RootComponent);
+
+	visionTrigger = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("visionTrigger"));
+	visionTrigger->SetupAttachment(RootComponent);
+	visionTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	visionTrigger->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	visionTrigger->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 }
 
 // Called when the game starts or when spawned
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

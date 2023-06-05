@@ -9,6 +9,7 @@
 
 class USkeletalMeshComponent;
 class UStaticMeshComponent;
+class UBoxComponent;
 
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemy : public ACharacter
@@ -36,6 +37,9 @@ private:
 	//USceneComponent* rootComponent{ nullptr };
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* skeletalMesh {nullptr};
+public:
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMeshComponent* visionTrigger {nullptr};
 
 	//varibles
 private:

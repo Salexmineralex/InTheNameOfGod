@@ -9,16 +9,28 @@
 #include "EngineUtils.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/Character.h"
+#include "Components/StaticMeshComponent.h"
 
 
 //project
 #include "InTheNameOfGod/AI/WayPoint.h"
+#include "BaseEnemy.h"
+
 
 void ABaseEnemyController::GetAllWayPoints()
 {
 	TArray<AActor*> allWayPoints;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWayPoint::StaticClass(), allWayPoints);
 	wayPointsAmount = allWayPoints.Num();
+}
+
+
+void ABaseEnemyController::CPPBeginPlay()
+{
+	if (ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn()))
+	{
+		visionTrigger = owner->visionTrigger;
+	}
 }
 
 
@@ -99,6 +111,28 @@ void ABaseEnemyController::ChecknearbyEnemy()
 		myBlackboard->SetValueAsObject("TargetActorToFollow", NULL);
 
 	}
+}
+void ABaseEnemyController::CheckCanSeePlayer()
+{
+	if (!visionTrigger)
+		return;
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+
+	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+	TArray<AActor*> overlapingActors;
+	visionTrigger->GetOverlappingActors(overlapingActors, ACharacter::StaticClass());
+	for (AActor* currentActor : overlapingActors)
+	{
+		if (currentActor == player)
+		{
+			myBlackboard->SetValueAsObject("TargetActorToFollow", currentActor);
+			break;
+		}
+	}
+	myBlackboard->SetValueAsObject("TargetActorToFollow", NULL);
+
+
 }
 
 
