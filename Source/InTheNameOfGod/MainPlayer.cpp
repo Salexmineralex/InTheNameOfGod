@@ -84,17 +84,27 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
 {
+
+	if(animationBeenPlayed == false && inputArray.Num() >= 1)
+	{
+		inputArray.Reset();
+				
+	}
 	
+	if(canAttack)
+	{
 		inputArray.Push(EAttackInputCombo::Light);
 		TArray<EAttackInputCombo> copyinput;
-		if(animationBeenPlayed == false && inputArray.Num() > 1)
-		{
-			inputArray.Reset();
-			
-		}
+		// if(animationBeenPlayed == false && inputArray.Num() > 1)
+		// {
+		// 	inputArray.Reset();
+		// 	
+		// }
 		copyinput.Append(inputArray);
 		StartCombo_Implementation(copyinput);
-
+		
+	}
+	
 	
 
 }
@@ -102,16 +112,25 @@ void AMainPlayer::Attack(const FInputActionValue& Value)
 void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 {
 
+	if(animationBeenPlayed == false && inputArray.Num() >= 1)
+	{
+		inputArray.Reset();
+				
+	}
+	
+	
+	if(canAttack)
+	{
 		inputArray.Push(EAttackInputCombo::Strong);
 		TArray<EAttackInputCombo> copyinput;
-		if(animationBeenPlayed == false && inputArray.Num() > 1)
-		{
-			inputArray.Reset();
-				
-		}
+		// if(animationBeenPlayed == false && inputArray.Num() > 1)
+		// {
+		// 	inputArray.Reset();
+		// 		
+		// }
 		copyinput.Append(inputArray);
 		StartCombo_Implementation(copyinput);
-	
+	}
 	
 
 }
@@ -135,6 +154,7 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 	
 	if(inputs.Num() == 0 && montage)
 	{
+		canAttack = false;
 		animationBeenPlayed = true;
 		PlayAnimMontage(montage);
 		input = EAttackInputCombo::defaults;
@@ -143,7 +163,7 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 
 	if( inputs.Num() > 0)
 	{
-	
+		canAttack = true;
 		input = inputs[0];
 		inputs.RemoveAt(0);
 		actualInputs = inputs.Num();
