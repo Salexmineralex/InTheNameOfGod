@@ -18,7 +18,7 @@ AMainPlayer::AMainPlayer()
 
 }
 
-// Called when the game starts or when spawned
+// Called when the game s or when spawned
 void AMainPlayer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -84,44 +84,43 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
 {
-
-	if(canAttack)
-	{
-		canAttack = false;
+	
 		inputArray.Push(EAttackInputCombo::Light);
 		TArray<EAttackInputCombo> copyinput;
+		if(animationBeenPlayed == false && inputArray.Num() > 1)
+		{
+			inputArray.Reset();
+			
+		}
 		copyinput.Append(inputArray);
 		StartCombo_Implementation(copyinput);
 
-	}
 	
-	// if(GetCurrentMontage() != MyAnimationPool[lightCombo])
-	// {
-	// 	PlayAnimMontage(MyAnimationPool[lightCombo]);
-	// }
+
 }
 
 void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 {
-	if(canAttack)
-	{
-		canAttack = false;
+
 		inputArray.Push(EAttackInputCombo::Strong);
 		TArray<EAttackInputCombo> copyinput;
+		if(animationBeenPlayed == false && inputArray.Num() > 1)
+		{
+			inputArray.Reset();
+				
+		}
 		copyinput.Append(inputArray);
 		StartCombo_Implementation(copyinput);
-	}
-
-	// if(GetCurrentMontage() != MyAnimationPool[strongCombo])
-	// {
-	// 	PlayAnimMontage(this->MyAnimationPool[strongCombo]);
-	// }
+	
+	
 
 }
 
 void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inputsArray)
 {
-	
+	// canAttack = true;
+
+	animationBeenPlayed = false;
 	StartCombo(inputsArray);
 	
 }
@@ -133,9 +132,10 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 {
 
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
-
+	
 	if(inputs.Num() == 0 && montage)
 	{
+		animationBeenPlayed = true;
 		PlayAnimMontage(montage);
 		input = EAttackInputCombo::defaults;
 
@@ -146,10 +146,12 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 	
 		input = inputs[0];
 		inputs.RemoveAt(0);
+		actualInputs = inputs.Num();
 		outputInput = inputs;
 
 	}
 
+	
 	
 	
 }

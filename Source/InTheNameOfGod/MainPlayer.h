@@ -57,6 +57,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool canAttack = true;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool animationBeenPlayed = false;
+
+	int actualInputs = 0;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Animation")
 	TArray<EAttackInputCombo> inputArray;
 
