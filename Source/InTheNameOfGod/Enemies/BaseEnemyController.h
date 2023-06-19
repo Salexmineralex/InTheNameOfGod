@@ -14,6 +14,7 @@ class UStaticMeshComponent;
 /**
  * 
  */
+
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
@@ -34,6 +35,10 @@ private:
 public://tasks
 	UFUNCTION(Category = Tasks)
 	void UpdateNextTargetPoint();
+
+	UFUNCTION(Category = Tasks)
+	void ChangeState(int newState);
+
 	UFUNCTION(BlueprintCallable, Category = Tasks)
 	EPathFollowingRequestResult::Type MoveToPlayer();
 
@@ -42,18 +47,25 @@ public://tasks
 	UFUNCTION(Category = Services)
 	void ChecknearbyEnemy();
 	UFUNCTION(Category = Services)
-	void CheckCanSeePlayer();
+	bool CheckCanSeePlayer();
 	UFUNCTION(Category = Services)
 	void SaveLastPlayerPosition();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)
 	void GetAllWayPoints();
+
 	UFUNCTION(BlueprintCallable)
 	void CPPBeginPlay();
+	UFUNCTION(BlueprintCallable)
+	void CPPBeginPlayPostBT();
 
 	//variables funcionamiento
 	bool hasCheckLastPlayerPosition{ true };
+
+	int EnemyState{ 0 };//0:Patrol / 1: FollowPlayer / 2:GoingToFight / 3: WaitingForFight / 4: fighting
+	
+	
 
 
 

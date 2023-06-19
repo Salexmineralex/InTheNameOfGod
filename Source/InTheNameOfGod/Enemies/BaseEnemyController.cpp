@@ -16,12 +16,15 @@
 #include "InTheNameOfGod/AI/WayPoint.h"
 #include "BaseEnemy.h"
 
+//AHIR VAS A APREDER A FER SERVIR EL DECORATOR BLACKBOARD, FES QUE AMB AIXO DETECTIS LA COLISIO
+
 
 void ABaseEnemyController::GetAllWayPoints()
 {
 	TArray<AActor*> allWayPoints;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWayPoint::StaticClass(), allWayPoints);
 	wayPointsAmount = allWayPoints.Num();
+
 }
 
 
@@ -31,7 +34,20 @@ void ABaseEnemyController::CPPBeginPlay()
 	{
 		visionTrigger = owner->visionTrigger;
 	}
+	GetAllWayPoints();
+
 }
+void ABaseEnemyController::CPPBeginPlayPostBT()
+{
+	ChangeState(0);
+
+
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	target = player;
+	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
+}
+
 
 
 
@@ -46,7 +62,6 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 		hasCheckLastPlayerPosition = true;
 		FVector newPos = myBlackboard->GetValueAsVector("LastPlayerPosKnown");
 		myBlackboard->SetValueAsVector("WayPointPosition",newPos);
-		myBlackboard->SetValueAsBool("HolaBuenas", hasCheckLastPlayerPosition);
 
 		return;
 	}
@@ -67,7 +82,6 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 			break;
 		}
 	}
-	myBlackboard->SetValueAsBool("HolaBuenas", hasCheckLastPlayerPosition);
 
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
 }
@@ -78,7 +92,7 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 
 void ABaseEnemyController::ChecknearbyEnemy()
 {
-	FVector start = GetPawn()->GetActorLocation();
+	/*FVector start = GetPawn()->GetActorLocation();
 	FVector end = start + FVector(0, 0, 15.f);
 	//a que objetos les hace caso
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
@@ -90,7 +104,7 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	TArray<FHitResult> outHits;
 
 	bool someActorClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
-		GetWorld(), start, end, 1500,objectTypes , false, actorsToIgnore,EDrawDebugTrace::ForDuration, outHits,true);
+		GetWorld(), start, end, 30,objectTypes , false, actorsToIgnore,EDrawDebugTrace::ForDuration, outHits,true);
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	if (someActorClose)
@@ -110,12 +124,38 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	{
 		myBlackboard->SetValueAsObject("TargetActorToFollow", NULL);
 
+	}*/
+	if(!visionTrigger)
+		return ;
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+
+	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+	TArray<AActor*> overlapingActors;
+	visionTrigger->GetOverlappingActors(overlapingActors, ACharacter::StaticClass());
+	for (AActor* currentActor : overlapingActors)
+	{
+		if (currentActor == target)
+		{
+			myBlackboard->SetValueAsBool("CanSeePlayer", true);
+			return ;
+		}
 	}
+			myBlackboard->SetValueAsBool("CanSeePlayer", false);
+	return ;
 }
-void ABaseEnemyController::CheckCanSeePlayer()
+
+void ABaseEnemyController::ChangeState(int newState)
+{
+	EnemyState = newState;
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsInt("EnemyState", EnemyState);
+}
+
+bool ABaseEnemyController::CheckCanSeePlayer()
 {
 	if (!visionTrigger)
-		return;
+		return false;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
@@ -127,10 +167,11 @@ void ABaseEnemyController::CheckCanSeePlayer()
 		if (currentActor == player)
 		{
 			myBlackboard->SetValueAsObject("TargetActorToFollow", currentActor);
-			break;
+			return true;
 		}
 	}
 	myBlackboard->SetValueAsObject("TargetActorToFollow", NULL);
+	return false;
 
 
 }
@@ -141,7 +182,6 @@ void ABaseEnemyController::SaveLastPlayerPosition()
 	hasCheckLastPlayerPosition = false;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	AActor* playerActor = Cast<AActor>(myBlackboard->GetValueAsObject("TargetActorToFollow"));
-	myBlackboard->SetValueAsBool("HolaBuenas", hasCheckLastPlayerPosition);
 
 	myBlackboard->SetValueAsVector("LastPlayerPosKnown", playerActor->GetActorLocation());
 }
