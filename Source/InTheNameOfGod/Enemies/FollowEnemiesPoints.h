@@ -15,9 +15,10 @@ struct FEnemyFinalPoint
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	USceneComponent* pointPosition{nullptr};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		USceneComponent* pointPosition{nullptr};
 
+		UPROPERTY( BlueprintReadWrite)
 	bool isFull{ false };
 
 };
@@ -26,11 +27,11 @@ USTRUCT(Blueprintable)
 struct FPointsRange
 {
 	GENERATED_BODY()
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FEnemyFinalPoint> points;
-	UPROPERTY(EditAnyWhere)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 		float radiusRange{ 30 };
-	UPROPERTY(EditAnyWhere)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 		int pointsAmount{ 0 };
 };
 
@@ -51,10 +52,18 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = Points)
 	TArray<FPointsRange> posibleEnemypoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Points)
+	float radiusRangeOffset{ 10 };
 
-	UPROPERTY(EditAnywhere)
-	USceneComponent* buenasTardes{nullptr};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Points)
+		float firstRadius{ 10 };
+
+	UFUNCTION(BlueprintCallable)
+	void RecolocatePoints();
+
+
+
 		
 };

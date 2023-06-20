@@ -2,8 +2,10 @@
 
 
 #include "FollowEnemiesPoints.h"
-
+//#include "Math/RandomStream.h"
+//#include "Math/UnrealMathUtility.h"
 // Sets default values for this component's properties
+
 UFollowEnemiesPoints::UFollowEnemiesPoints()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -18,27 +20,8 @@ UFollowEnemiesPoints::UFollowEnemiesPoints()
 void UFollowEnemiesPoints::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// ...
-	buenasTardes = NewObject<USceneComponent>(GetOwner());
-	buenasTardes->SetupAttachment(GetOwner()->GetRootComponent());
-		//Crear puntos 
-	/*for (FPointsRange group : posibleEnemypoints)
-	{
-		for (int i = 0; i < group.pointsAmount; i++)
-		{
-			//USceneComponent* newPoint = GetOwner()->CreateDefaultSubobject<USceneComponent>(TEXT("ENEMY POINT"));
-			USceneComponent* newItem = NewObject<USceneComponent>(this);
-			newItem->SetupAttachment(GetOwner()->GetRootComponent());
-			newItem->RegisterComponent();
 
-			FEnemyFinalPoint hola;
-			hola.pointPosition = newItem;
-			group.points.Add(hola);
-
-		}
-
-	}*/
 	
 }
 
@@ -52,3 +35,29 @@ void UFollowEnemiesPoints::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
+void UFollowEnemiesPoints::RecolocatePoints()
+{
+	for (FPointsRange group : posibleEnemypoints)
+	{
+		float radius = group.radiusRange;
+		float angleDiference = 360 / group.points.Num();
+		float currentAngle = 0;
+
+		FVector origin = GetOwner()->GetActorLocation();
+
+		for (FEnemyFinalPoint point : group.points)
+		{
+			FRandomStream RandomStream(FMath::Rand());
+			float newRadius = RandomStream.FRandRange(radius - 10, radius + 10);
+			float newAngle = RandomStream.FRandRange(currentAngle - 3, currentAngle + 3);
+			float radians = FMath::DegreesToRadians(newAngle);
+
+			FVector finalPos = FVector(FMath::Cos(radians), FMath::Sin(radians), 0.f) * newRadius;
+			point.pointPosition->SetRelativeLocation( finalPos);
+
+			currentAngle += angleDiference;
+
+
+		}
+	}
+}
