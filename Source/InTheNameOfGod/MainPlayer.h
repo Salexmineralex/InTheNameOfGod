@@ -41,6 +41,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<USkeletalMeshComponent> swordMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UCapsuleComponent> swordCollision;
+
 #pragma region Animation
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
@@ -99,6 +102,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	
+
+	UFUNCTION()
+	void DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	UFUNCTION( BlueprintNativeEvent,BlueprintCallable , Category = "Animation" )
 	void StartCombo(const TArray<EAttackInputCombo> &inputsArray);
@@ -109,4 +116,13 @@ public:
 	UFUNCTION(BlueprintCallable,meta=(ExpandEnumAsExecs="input"))
 	void SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage,EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput);
 
+
+	FTimerHandle hitStop;
+
+	UFUNCTION()
+	void StartHitStop();
+
+	UFUNCTION()
+	void EndHitStop();
+	
 };

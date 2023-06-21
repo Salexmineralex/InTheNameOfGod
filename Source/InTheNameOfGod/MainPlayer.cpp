@@ -4,6 +4,9 @@
 #include "MainPlayer.h"
 
 #include "EnhancedInputComponent.h"
+#include "LifeComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AMainPlayer::AMainPlayer()
@@ -13,8 +16,10 @@ AMainPlayer::AMainPlayer()
 	
 	this->swordMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("swordMesh"));
 	swordMesh->SetupAttachment(RootComponent);
-	
-	
+
+	this->swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
+	this->swordCollision->SetupAttachment(swordMesh);
+
 
 }
 
@@ -25,10 +30,13 @@ void AMainPlayer::BeginPlay()
 
 	FTransform swordtr =  GetMesh()->GetSocketTransform("sword_socket",RTS_World);
 	
-
 	swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true),"sword_socket");
 	
 	swordMesh->SetWorldTransform(swordtr);
+	
+	this->swordCollision->OnComponentBeginOverlap.AddDynamic(this,&AMainPlayer::DamageEnemy);
+
+	this->swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 // Called every frame
@@ -171,9 +179,34 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 
 	}
 
+}
+
+
+void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+
+	TSubclassOf<ULifeComponent> LifeComponent;
+	ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
+	life = OtherActor->FindComponentByClass<ULifeComponent>();
 	
+	if(life && canAttack)
+	{
+		StartHitStop();
+		life->GetDamage(10);
+	}
+
+}
+
+void AMainPlayer::StartHitStop()
+{
+	this->CustomTimeDilation = 0;
 	
-	
+	GetWorld()->GetTimerManager().SetTimer(hitStop,this, &AMainPlayer::EndHitStop, 0.16f, false,0.16f);
+}
+
+void AMainPlayer::EndHitStop()
+{
+	this->CustomTimeDilation = 1;
 }
 
 
