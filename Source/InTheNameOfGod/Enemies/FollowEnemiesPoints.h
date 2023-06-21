@@ -16,10 +16,12 @@ struct FEnemyFinalPoint
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		USceneComponent* pointPosition{nullptr};
+	USceneComponent* pointPosition{nullptr};
 
 		UPROPERTY( BlueprintReadWrite)
 	bool isFull{ false };
+
+	AActor* currentEnemyAtPoint{ nullptr };
 
 };
 
@@ -62,6 +64,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void RecolocatePoints();
+
+	//enemy
+	USceneComponent* AsignNewPoint();
 
 
 

@@ -5,6 +5,7 @@
 //#include "Math/RandomStream.h"
 //#include "Math/UnrealMathUtility.h"
 // Sets default values for this component's properties
+//#include "InTheNameOfGod/Enemies/BaseEnemyController"
 
 UFollowEnemiesPoints::UFollowEnemiesPoints()
 {
@@ -20,10 +21,12 @@ UFollowEnemiesPoints::UFollowEnemiesPoints()
 void UFollowEnemiesPoints::BeginPlay()
 {
 	Super::BeginPlay();
+	
+}
 	// ...
 
 	
-}
+
 
 
 
@@ -60,4 +63,38 @@ void UFollowEnemiesPoints::RecolocatePoints()
 
 		}
 	}
+}
+
+USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
+{
+	for (FPointsRange group : posibleEnemypoints)
+	{
+		int max = group.points.Num();
+		int currentPoint = 0;
+		
+		for (int i = 0; i < group.points.Num(); i++)
+		{
+			if (i % 2 == 0)
+			{
+				currentPoint = (int)i / 2;
+			}
+			else
+			{
+				currentPoint = (int)max / 2 + (int)i / 2;
+			}
+
+			if (!group.points[currentPoint].isFull)
+			{
+				return group.points[currentPoint].pointPosition;
+			}
+		}
+		if (max % 2 != 0)
+		{
+			return group.points[max - 1].pointPosition;
+		}
+
+
+	}
+	return nullptr;
+	//return FVector(0, 0, 0);
 }

@@ -15,6 +15,7 @@
 //project
 #include "InTheNameOfGod/AI/WayPoint.h"
 #include "BaseEnemy.h"
+#include "FollowEnemiesPoints.h"
 
 //AHIR VAS A APREDER A FER SERVIR EL DECORATOR BLACKBOARD, FES QUE AMB AIXO DETECTIS LA COLISIO
 
@@ -39,12 +40,15 @@ void ABaseEnemyController::CPPBeginPlay()
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
-	ChangeState(0);
+	ChangeState(2);
 
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	target = player;
+	bool buenas = false;
+	buenas = Cast<UFollowEnemiesPoints>(player) ? true : false;
+
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
 }
 
@@ -145,6 +149,16 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	return ;
 }
 
+
+void ABaseEnemyController::UpdatePositionAroundPlayer()
+{
+	if (currentPointAroundPlayer)
+	{
+		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+		myBlackboard->SetValueAsVector("PointAroundPlayer", currentPointAroundPlayer->GetComponentLocation());
+	}
+}
+
 void ABaseEnemyController::ChangeState(int newState)
 {
 	EnemyState = newState;
@@ -196,4 +210,14 @@ EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 
 	return moveToActorResult;
 }
+
+void ABaseEnemyController::AsignNextPoint()
+{
+	if (UFollowEnemiesPoints* followComponent = Cast<UFollowEnemiesPoints>(target))
+	{
+		currentPointAroundPlayer = followComponent->AsignNewPoint();
+		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	}
+}
+
 

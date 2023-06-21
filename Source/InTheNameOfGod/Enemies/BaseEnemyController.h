@@ -30,6 +30,10 @@ private:
 	int wayPointsAmount{ 0 };
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess = "true"))
 	UStaticMeshComponent* visionTrigger{ nullptr };
+
+	USceneComponent* currentPointAroundPlayer{ nullptr };
+
+	
 	
 
 public://tasks
@@ -42,6 +46,9 @@ public://tasks
 	UFUNCTION(BlueprintCallable, Category = Tasks)
 	EPathFollowingRequestResult::Type MoveToPlayer();
 
+	UFUNCTION(Category = Tasks)
+	void AsignNextPoint();
+
 
 	//Services
 	UFUNCTION(Category = Services)
@@ -50,6 +57,8 @@ public://tasks
 	bool CheckCanSeePlayer();
 	UFUNCTION(Category = Services)
 	void SaveLastPlayerPosition();
+	UFUNCTION(Category = Services)
+	void UpdatePositionAroundPlayer();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)
