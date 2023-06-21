@@ -40,7 +40,7 @@ void ABaseEnemyController::CPPBeginPlay()
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
-	ChangeState(2);
+	ChangeState(0);
 
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
