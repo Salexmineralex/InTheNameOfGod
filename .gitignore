@@ -77,3 +77,4 @@ Jenkinsfile
 Plugins/Developer/RiderLink/*
 .idea
 .vs
+.vsconfig
