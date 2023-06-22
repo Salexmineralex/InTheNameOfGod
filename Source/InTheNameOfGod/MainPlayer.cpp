@@ -7,6 +7,9 @@
 #include "LifeComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+//project
+#include "InTheNameOfGod/Enemies/FollowEnemiesPoints.h"
+
 
 // Sets default values
 AMainPlayer::AMainPlayer()
@@ -19,6 +22,8 @@ AMainPlayer::AMainPlayer()
 
 	this->swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
 	this->swordCollision->SetupAttachment(swordMesh);
+
+	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
 
 
 }

@@ -17,7 +17,6 @@
 #include "BaseEnemy.h"
 #include "FollowEnemiesPoints.h"
 
-//AHIR VAS A APREDER A FER SERVIR EL DECORATOR BLACKBOARD, FES QUE AMB AIXO DETECTIS LA COLISIO
 
 
 void ABaseEnemyController::GetAllWayPoints()

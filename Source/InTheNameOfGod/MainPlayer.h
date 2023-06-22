@@ -8,7 +8,8 @@
 #include "MainPlayer.generated.h"
 
 
-	
+class UFollowEnemiesPoints;
+
 UENUM(BlueprintType)
 enum class EAttackAnimationsCombo : uint8
 {
@@ -43,6 +44,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> swordCollision;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UFollowEnemiesPoints* followableComponent{ nullptr };
 
 #pragma region Animation
 
