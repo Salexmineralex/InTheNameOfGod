@@ -16,6 +16,7 @@
 #include "InTheNameOfGod/AI/WayPoint.h"
 #include "BaseEnemy.h"
 #include "FollowEnemiesPoints.h"
+#include "InTheNameOfGod/MainPlayer.h"
 
 
 
@@ -39,7 +40,7 @@ void ABaseEnemyController::CPPBeginPlay()
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
-	ChangeState(0);
+	ChangeState(2);
 
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
@@ -212,10 +213,16 @@ EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 
 void ABaseEnemyController::AsignNextPoint()
 {
-	if (UFollowEnemiesPoints* followComponent = Cast<UFollowEnemiesPoints>(target))
+	if (hasAsignedPoint)
+		return;
+	if (AMainPlayer* player = Cast<AMainPlayer>(target))
 	{
-		currentPointAroundPlayer = followComponent->AsignNewPoint();
-		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+		if (player->followableComponent)
+		{
+			currentPointAroundPlayer = player->followableComponent->AsignNewPoint();
+			UpdatePositionAroundPlayer();
+		}
+		hasAsignedPoint = true;
 	}
 }
 

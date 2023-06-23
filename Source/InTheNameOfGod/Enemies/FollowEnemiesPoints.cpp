@@ -67,7 +67,7 @@ void UFollowEnemiesPoints::RecolocatePoints()
 
 USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
 {
-	for (FPointsRange group : posibleEnemypoints)
+	for (FPointsRange& group : posibleEnemypoints)
 	{
 		int max = group.points.Num();
 		int currentPoint = 0;
@@ -82,19 +82,23 @@ USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
 			{
 				currentPoint = (int)max / 2 + (int)i / 2;
 			}
-
 			if (!group.points[currentPoint].isFull)
 			{
+				group.points[currentPoint].SwitchIsFull();
+				bool tardes = group.points[currentPoint].isFull;
 				return group.points[currentPoint].pointPosition;
 			}
 		}
 		if (max % 2 != 0)
 		{
-			return group.points[max - 1].pointPosition;
+			if (!group.points[max-1].isFull)
+			{
+				group.points[max-1].SwitchIsFull();
+				return group.points[max - 1].pointPosition;
+			}
 		}
 
 
 	}
 	return nullptr;
-	//return FVector(0, 0, 0);
 }

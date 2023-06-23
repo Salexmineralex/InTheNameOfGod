@@ -30,8 +30,10 @@ private:
 	int wayPointsAmount{ 0 };
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess = "true"))
 	UStaticMeshComponent* visionTrigger{ nullptr };
-
+	UPROPERTY(VisibleAnywhere)
 	USceneComponent* currentPointAroundPlayer{ nullptr };
+	UPROPERTY(EditAnywhere, Category=Buscame)
+	bool hasAsignedPoint{ false };
 
 	
 	

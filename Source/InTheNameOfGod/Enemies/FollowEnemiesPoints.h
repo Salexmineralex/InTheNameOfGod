@@ -18,10 +18,12 @@ struct FEnemyFinalPoint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* pointPosition{nullptr};
 
-		UPROPERTY( BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool isFull{ false };
 
 	AActor* currentEnemyAtPoint{ nullptr };
+
+	void SwitchIsFull() { isFull = !isFull; }
 
 };
 
