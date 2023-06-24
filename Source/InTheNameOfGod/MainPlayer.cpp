@@ -25,6 +25,10 @@ AMainPlayer::AMainPlayer()
 
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
 
+	enemyPointsParent = CreateDefaultSubobject<USceneComponent>(TEXT("EnemyPointsParent"));
+	enemyPointsParent->SetupAttachment(RootComponent);
+	followableComponent->parentPoints = enemyPointsParent;
+
 
 }
 
@@ -48,7 +52,6 @@ void AMainPlayer::BeginPlay()
 void AMainPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -79,6 +82,7 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void AMainPlayer::Move(const FInputActionValue& Value)
 {
 	Super::Move(Value);
+	
 
 	FVector2d VectorMovement = Value.Get<FVector2d>();
 	
@@ -86,8 +90,10 @@ void AMainPlayer::Move(const FInputActionValue& Value)
 	{
 		PlayAnimMontage(this->walkAnimMontage);	
 	}
+
 	
 }
+
 
 void AMainPlayer::StopMoving(const FInputActionValue& Value)
 {

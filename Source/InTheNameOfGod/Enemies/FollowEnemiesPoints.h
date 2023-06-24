@@ -67,6 +67,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RecolocatePoints();
 
+	USceneComponent* parentPoints{ nullptr };
+	bool canRotatePoints{ true };
+	int currentEnemiesGoingPlayer{0};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Points)
+		float checkDistance{ 20 };
+
+	void CheckCloseEnemies();
+
 	//enemy
 	USceneComponent* AsignNewPoint();
 

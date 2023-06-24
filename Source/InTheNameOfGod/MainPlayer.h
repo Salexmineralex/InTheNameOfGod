@@ -48,6 +48,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UFollowEnemiesPoints* followableComponent{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly)
+	USceneComponent* enemyPointsParent{nullptr};
+	USceneComponent* GetPointsParent() { return enemyPointsParent; }
+
 #pragma region Animation
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
@@ -85,6 +89,7 @@ public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* SecondaryAction;
+
 
 
 	

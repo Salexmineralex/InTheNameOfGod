@@ -2,11 +2,14 @@
 
 
 #include "FollowEnemiesPoints.h"
-//#include "Math/RandomStream.h"
-//#include "Math/UnrealMathUtility.h"
-// Sets default values for this component's properties
-//#include "InTheNameOfGod/Enemies/BaseEnemyController"
+//unreal
+#include "Kismet/KismetSystemLibrary.h"
+//project
+#include "InTheNameOfGod/MainPlayer.h"
+#include "InTheNameOfGod/Enemies/BaseEnemyController.h"
+#include "InTheNameOfGod/Enemies/BaseEnemy.h"
 
+// Sets default values for this component's properties
 UFollowEnemiesPoints::UFollowEnemiesPoints()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
@@ -21,7 +24,14 @@ UFollowEnemiesPoints::UFollowEnemiesPoints()
 void UFollowEnemiesPoints::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//if (AMainPlayer* player = Cast<AMainPlayer>(GetOwner()))
+	//{
+	//	parentPoints = player->GetPointsParent();
+	//}
+	CheckCloseEnemies();
+
+
 }
 	// ...
 
@@ -35,11 +45,17 @@ void UFollowEnemiesPoints::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!canRotatePoints&& parentPoints)
+	{
+		parentPoints->SetWorldRotation(FRotator::ZeroRotator);
+	}
+
 	// ...
 }
 
 void UFollowEnemiesPoints::RecolocatePoints()
 {
+
 	for (FPointsRange group : posibleEnemypoints)
 	{
 		float radius = group.radiusRange;
@@ -67,6 +83,10 @@ void UFollowEnemiesPoints::RecolocatePoints()
 
 USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
 {
+	currentEnemiesGoingPlayer++;
+	if (currentEnemiesGoingPlayer >= 5)
+		canRotatePoints = false;
+
 	for (FPointsRange& group : posibleEnemypoints)
 	{
 		int max = group.points.Num();
@@ -101,4 +121,56 @@ USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
 
 	}
 	return nullptr;
+}
+
+void UFollowEnemiesPoints::CheckCloseEnemies()
+{
+	FVector initPos = GetOwner()->GetActorLocation();
+	FVector endPos = initPos + FVector(0, 0, checkDistance);
+
+	//a que objetos les hace caso
+	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
+	objectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+
+	//ActorsToIgnore
+	TArray<AActor*> actorsToIgnore;
+	actorsToIgnore.Add(GetOwner());
+
+	//actores
+	TArray<FHitResult> outHits;
+
+	bool someEnemyClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
+		GetWorld(), initPos, endPos, checkDistance, objectTypes, false, actorsToIgnore, EDrawDebugTrace::ForDuration, outHits, true
+	);
+	if (someEnemyClose)
+	{
+		for (int i = 0; i < outHits.Num() - 1; i++)
+		{
+			for (int j = 0; j < outHits.Num() - i - 1; j++)
+			{
+				float distanceA = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j].GetActor()->GetActorLocation());
+				float distanceB = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j+1].GetActor()->GetActorLocation());
+				if (distanceA > distanceB)
+				{
+					FHitResult temp = outHits[j];
+					outHits[j] = outHits[j + 1];
+					outHits[j + 1] = temp;
+				}
+			}
+		}
+
+		for (int i = 0; i < outHits.Num(); i++)
+		{
+			//if (ABaseEnemyController* currentEnemy = Cast<ABase>(outHits[i].GetActor()))
+			if (ABaseEnemy* currentEnemy = Cast<ABaseEnemy>(outHits[i].GetActor()))
+			{
+				if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(currentEnemy->AIControllerClass))
+				{
+					controller->AsignNextPoint();
+				}
+			}
+
+		}
+	}
+
 }
