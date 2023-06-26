@@ -56,6 +56,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* walkAnimMontage;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* attachAnimationMontage;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackAnimationsCombo lightCombo = EAttackAnimationsCombo::StartAnim;
 	
@@ -68,10 +72,20 @@ public:
 	bool animationBeenPlayed = false;
 
 	int actualInputs = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool HasWeapon = true;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Animation")
 	TArray<EAttackInputCombo> inputArray;
 
+	FTimerHandle attachWeapon;
+	
+	UFUNCTION(BlueprintCallable,Category="Animation")
+    void AttachWeapon();
+
+	UFUNCTION(BlueprintCallable,Category="Animation")
+	void AttachAnimation();
 
 
 #pragma endregion Animation

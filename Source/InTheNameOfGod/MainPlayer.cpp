@@ -151,7 +151,7 @@ void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inputsArray)
 {
 	// canAttack = true;
-
+	GetWorld()->GetTimerManager().ClearTimer(attachWeapon);
 	animationBeenPlayed = false;
 	StartCombo(inputsArray);
 	
@@ -171,6 +171,8 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 		animationBeenPlayed = true;
 		PlayAnimMontage(montage);
 		input = EAttackInputCombo::defaults;
+		GetWorld()->GetTimerManager().SetTimer(attachWeapon,this, &AMainPlayer::AttachAnimation, 5.0f, false,5.0f);
+
 
 	}
 
@@ -212,6 +214,37 @@ void AMainPlayer::StartHitStop()
 void AMainPlayer::EndHitStop()
 {
 	this->CustomTimeDilation = 1;
+}
+
+
+void AMainPlayer::AttachAnimation()
+{
+	PlayAnimMontage(attachAnimationMontage);
+}
+
+void AMainPlayer::AttachWeapon()
+{
+
+	if(HasWeapon)
+	{
+
+		FTransform swordtr =  GetMesh()->GetSocketTransform("sword_scabbard",RTS_World);
+		
+		swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,EAttachmentRule::KeepRelative,EAttachmentRule::KeepRelative,false),"sword_scabbard");
+	
+		swordMesh->SetWorldTransform(swordtr);
+
+		HasWeapon = false;
+	}else
+	{
+		FTransform swordtr =  GetMesh()->GetSocketTransform("sword_socket",RTS_World);
+	
+		swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,true),"sword_socket");
+	
+		swordMesh->SetWorldTransform(swordtr);
+
+		HasWeapon = true;
+	}
 }
 
 
