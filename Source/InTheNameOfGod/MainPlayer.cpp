@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 //project
+#include "GameFramework/SpringArmComponent.h"
 #include "InTheNameOfGod/Enemies/FollowEnemiesPoints.h"
 
 
@@ -26,6 +27,8 @@ AMainPlayer::AMainPlayer()
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
 
 
+
+
 }
 
 // Called when the game s or when spawned
@@ -42,6 +45,7 @@ void AMainPlayer::BeginPlay()
 	this->swordCollision->OnComponentBeginOverlap.AddDynamic(this,&AMainPlayer::DamageEnemy);
 
 	this->swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 // Called every frame
@@ -152,6 +156,7 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 {
 	// canAttack = true;
 	GetWorld()->GetTimerManager().ClearTimer(attachWeapon);
+	
 	animationBeenPlayed = false;
 	StartCombo(inputsArray);
 	
@@ -230,7 +235,7 @@ void AMainPlayer::AttachWeapon()
 
 		FTransform swordtr =  GetMesh()->GetSocketTransform("sword_scabbard",RTS_World);
 		
-		swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::KeepRelative,EAttachmentRule::KeepRelative,EAttachmentRule::KeepRelative,false),"sword_scabbard");
+		swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),"sword_scabbard");
 	
 		swordMesh->SetWorldTransform(swordtr);
 

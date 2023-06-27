@@ -59,7 +59,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* attachAnimationMontage;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackAnimationsCombo lightCombo = EAttackAnimationsCombo::StartAnim;
 	
