@@ -75,6 +75,7 @@ public:
 		float checkDistance{ 20 };
 
 	void CheckCloseEnemies();
+	void CheckCloseEnemies(TArray<FHitResult> outhits);
 
 	//enemy
 	USceneComponent* AsignNewPoint();

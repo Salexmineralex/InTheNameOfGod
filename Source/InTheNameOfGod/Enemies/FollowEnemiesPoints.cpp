@@ -29,7 +29,7 @@ void UFollowEnemiesPoints::BeginPlay()
 	//{
 	//	parentPoints = player->GetPointsParent();
 	//}
-	CheckCloseEnemies();
+	//CheckCloseEnemies();
 
 
 }
@@ -44,6 +44,7 @@ void UFollowEnemiesPoints::BeginPlay()
 void UFollowEnemiesPoints::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
 
 	if (!canRotatePoints&& parentPoints)
 	{
@@ -83,7 +84,10 @@ void UFollowEnemiesPoints::RecolocatePoints()
 
 USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
 {
+
 	currentEnemiesGoingPlayer++;
+	if (currentEnemiesGoingPlayer == 1)
+		return parentPoints;
 	if (currentEnemiesGoingPlayer >= 5)
 		canRotatePoints = false;
 
@@ -164,13 +168,66 @@ void UFollowEnemiesPoints::CheckCloseEnemies()
 			//if (ABaseEnemyController* currentEnemy = Cast<ABase>(outHits[i].GetActor()))
 			if (ABaseEnemy* currentEnemy = Cast<ABaseEnemy>(outHits[i].GetActor()))
 			{
-				if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(currentEnemy->AIControllerClass))
+				if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(currentEnemy->Controller))
 				{
+					controller->hasAsignedPoint = false;
 					controller->AsignNextPoint();
 				}
 			}
 
 		}
 	}
+
+}
+void UFollowEnemiesPoints::CheckCloseEnemies(TArray<FHitResult> outHits)
+{
+	//FVector initPos = GetOwner()->GetActorLocation();
+	//FVector endPos = initPos + FVector(0, 0, checkDistance);
+	//
+	////a que objetos les hace caso
+	//TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
+	//objectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	//
+	////ActorsToIgnore
+	//TArray<AActor*> actorsToIgnore;
+	//actorsToIgnore.Add(GetOwner());
+	//
+	////actores
+	//TArray<FHitResult> outHits;
+	//
+	//bool someEnemyClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
+	//	GetWorld(), initPos, endPos, checkDistance, objectTypes, false, actorsToIgnore, EDrawDebugTrace::ForDuration, outHits, true
+	//);
+	//if (someEnemyClose)
+	//{
+		for (int i = 0; i < outHits.Num() - 1; i++)
+		{
+			for (int j = 0; j < outHits.Num() - i - 1; j++)
+			{
+				float distanceA = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j].GetActor()->GetActorLocation());
+				float distanceB = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j + 1].GetActor()->GetActorLocation());
+				if (distanceA > distanceB)
+				{
+					FHitResult temp = outHits[j];
+					outHits[j] = outHits[j + 1];
+					outHits[j + 1] = temp;
+				}
+			}
+		}
+
+		for (int i = 0; i < outHits.Num(); i++)
+		{
+			//if (ABaseEnemyController* currentEnemy = Cast<ABase>(outHits[i].GetActor()))
+			if (ABaseEnemy* currentEnemy = Cast<ABaseEnemy>(outHits[i].GetActor()))
+			{
+				if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(currentEnemy->Controller))
+				{
+					controller->hasAsignedPoint = false;
+					controller->AsignNextPoint();
+				}
+			}
+
+		}
+	//}
 
 }

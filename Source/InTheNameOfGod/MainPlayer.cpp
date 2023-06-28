@@ -24,6 +24,7 @@ AMainPlayer::AMainPlayer()
 	this->swordCollision->SetupAttachment(swordMesh);
 
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
+	//followableComponent->bWantsBeginPlay = true;
 
 	enemyPointsParent = CreateDefaultSubobject<USceneComponent>(TEXT("EnemyPointsParent"));
 	enemyPointsParent->SetupAttachment(RootComponent);

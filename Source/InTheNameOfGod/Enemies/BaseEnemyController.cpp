@@ -40,7 +40,7 @@ void ABaseEnemyController::CPPBeginPlay()
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
-	ChangeState(2);
+	ChangeState(0);
 
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
@@ -221,9 +221,74 @@ void ABaseEnemyController::AsignNextPoint()
 		{
 			currentPointAroundPlayer = player->followableComponent->AsignNewPoint();
 			UpdatePositionAroundPlayer();
-		}
+			ChangeState(2);
 		hasAsignedPoint = true;
+		}
 	}
 }
+
+void ABaseEnemyController::AlertSomeEnemies()
+{
+	FVector initPos = GetPawn()->GetActorLocation();
+	FVector endPos = initPos + FVector(0, 0, 20);
+
+	//a que objetos les hace caso
+	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
+	objectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+
+	//ActorsToIgnore
+	TArray<AActor*> actorsToIgnore;
+	actorsToIgnore.Add(GetPawn());
+
+	//actores
+	TArray<FHitResult> outHits;
+
+	bool someEnemyClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
+		GetWorld(), initPos, endPos, 200, objectTypes, false, actorsToIgnore, EDrawDebugTrace::ForDuration, outHits, true);
+	if (someEnemyClose)
+	{
+		if (AMainPlayer* player = Cast<AMainPlayer>(target))
+		{
+			if (player->followableComponent)
+			{
+				player->followableComponent->CheckCloseEnemies(outHits);
+				UpdatePositionAroundPlayer();
+			}
+			hasAsignedPoint = true;
+		}
+	}
+
+	/*if (someEnemyClose)
+	{
+		for (int i = 0; i < outHits.Num() - 1; i++)
+		{
+			for (int j = 0; j < outHits.Num() - i - 1; j++)
+			{
+				float distanceA = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j].GetActor()->GetActorLocation());
+				float distanceB = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j + 1].GetActor()->GetActorLocation());
+				if (distanceA > distanceB)
+				{
+					FHitResult temp = outHits[j];
+					outHits[j] = outHits[j + 1];
+					outHits[j + 1] = temp;
+				}
+			}
+		}
+
+		for (int i = 0; i < outHits.Num(); i++)
+		{
+			if (ABaseEnemy* currentEnemy = Cast<ABaseEnemy>(outHits[i].GetActor()))
+			{
+				if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(currentEnemy->Controller))
+				{
+					controller->hasAsignedPoint = false;
+					controller->AsignNextPoint();
+				}
+			}
+
+		}
+	}*/
+}
+
 
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-
+#include "EnemyManager.h"
 #include "BaseEnemyController.generated.h"
 
 
@@ -32,8 +32,10 @@ private:
 	UStaticMeshComponent* visionTrigger{ nullptr };
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* currentPointAroundPlayer{ nullptr };
-	UPROPERTY(EditAnywhere, Category=Buscame)
-	bool hasAsignedPoint{ false };
+
+
+	UPROPERTY(EditInstanceOnly)
+	AEnemyManager* enemyManager{nullptr};
 
 	
 	
@@ -50,6 +52,10 @@ public://tasks
 
 	UFUNCTION(Category = Tasks)
 	void AsignNextPoint();
+
+	UFUNCTION(Category = Tasks)
+	void AlertSomeEnemies();
+
 
 
 	//Services
@@ -75,6 +81,9 @@ public://tasks
 	bool hasCheckLastPlayerPosition{ true };
 
 	int EnemyState{ 0 };//0:Patrol / 1: FollowPlayer / 2:GoingToFight / 3: WaitingForFight / 4: fighting
+
+	UPROPERTY(EditAnywhere, Category=Buscame)
+	bool hasAsignedPoint{ false };
 	
 	
 
