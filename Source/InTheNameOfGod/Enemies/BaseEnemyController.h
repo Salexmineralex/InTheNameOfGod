@@ -31,7 +31,10 @@ private:
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess = "true"))
 	UStaticMeshComponent* visionTrigger{ nullptr };
 	UPROPERTY(VisibleAnywhere)
-	USceneComponent* currentPointAroundPlayer{ nullptr };
+	FVector currentPointAroundPlayer;
+
+	UPROPERTY(EditAnywhere)
+		float ameleDistance{ 10 };
 
 
 	UPROPERTY(EditInstanceOnly)
@@ -40,7 +43,14 @@ private:
 	
 	
 
-public://tasks
+public:
+	//functions
+	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
+	void OnEnemyDie();
+	
+	
+	
+	//tasks
 	UFUNCTION(Category = Tasks)
 	void UpdateNextTargetPoint();
 
@@ -67,6 +77,8 @@ public://tasks
 	void SaveLastPlayerPosition();
 	UFUNCTION(Category = Services)
 	void UpdatePositionAroundPlayer();
+	UFUNCTION(Category = Services)
+	void CheckPlayerAmele();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)

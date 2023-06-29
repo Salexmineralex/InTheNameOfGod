@@ -48,6 +48,8 @@ private:
 
 public:
 	ACharacter* player{ nullptr };
+	UFUNCTION(CallInEditor)
+		void OnDie();
 
 
 

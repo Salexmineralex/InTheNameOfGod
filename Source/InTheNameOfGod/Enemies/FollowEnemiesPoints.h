@@ -9,14 +9,14 @@
 
 
 #include "FollowEnemiesPoints.generated.h"
-
+class ABaseEnemyController;
 USTRUCT(Blueprintable)
 struct FEnemyFinalPoint
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USceneComponent* pointPosition{nullptr};
+	FVector pointPosition;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool isFull{ false };
@@ -32,11 +32,13 @@ struct FPointsRange
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FEnemyFinalPoint> points;
+	TArray<FVector> points;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 		float radiusRange{ 30 };
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 		int pointsAmount{ 0 };
+	UPROPERTY(VisibleAnywhere)
+	int enemiesInAmount{ 0 };
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -74,11 +76,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Points)
 		float checkDistance{ 20 };
 
+	UPROPERTY(VisibleAnywhere)
+		TArray<ABaseEnemyController*> enemiesKnowPlayer;
+
 	void CheckCloseEnemies();
 	void CheckCloseEnemies(TArray<FHitResult> outhits);
 
 	//enemy
-	USceneComponent* AsignNewPoint();
+	void AsignNewPoint(ABaseEnemyController* enemy);
+	void OnEnemyDie(ABaseEnemyController* enemy);
 
 
 

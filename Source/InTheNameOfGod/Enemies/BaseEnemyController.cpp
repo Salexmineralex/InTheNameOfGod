@@ -96,39 +96,6 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 
 void ABaseEnemyController::ChecknearbyEnemy()
 {
-	/*FVector start = GetPawn()->GetActorLocation();
-	FVector end = start + FVector(0, 0, 15.f);
-	//a que objetos les hace caso
-	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypes;
-	objectTypes.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-
-	TArray<AActor*> actorsToIgnore;
-	actorsToIgnore.Add(GetPawn());
-
-	TArray<FHitResult> outHits;
-
-	bool someActorClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
-		GetWorld(), start, end, 30,objectTypes , false, actorsToIgnore,EDrawDebugTrace::ForDuration, outHits,true);
-
-	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-	if (someActorClose)
-	{
-
-		ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-		for (FHitResult current: outHits)
-		{
-			if (current.GetActor() == player)
-			{
-				myBlackboard->SetValueAsObject("TargetActorToFollow", player);
-				break;
-			}
-		}
-	}
-	else
-	{
-		myBlackboard->SetValueAsObject("TargetActorToFollow", NULL);
-
-	}*/
 	if(!visionTrigger)
 		return ;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
@@ -152,10 +119,10 @@ void ABaseEnemyController::ChecknearbyEnemy()
 
 void ABaseEnemyController::UpdatePositionAroundPlayer()
 {
-	if (currentPointAroundPlayer)
+	//if (currentPointAroundPlayer)
 	{
 		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-		myBlackboard->SetValueAsVector("PointAroundPlayer", currentPointAroundPlayer->GetComponentLocation());
+		myBlackboard->SetValueAsVector("PointAroundPlayer", target->GetActorLocation() + currentPointAroundPlayer);
 	}
 }
 
@@ -199,6 +166,15 @@ void ABaseEnemyController::SaveLastPlayerPosition()
 
 	myBlackboard->SetValueAsVector("LastPlayerPosKnown", playerActor->GetActorLocation());
 }
+void ABaseEnemyController::CheckPlayerAmele()
+{
+	bool isAmele = FVector::Distance(GetPawn()->GetActorLocation(), target->GetActorLocation()) < ameleDistance;
+
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("IsPlayerAmele", isAmele);
+	if (isAmele)
+		ChangeState(4);
+}
 
 
 EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
@@ -219,10 +195,10 @@ void ABaseEnemyController::AsignNextPoint()
 	{
 		if (player->followableComponent)
 		{
-			currentPointAroundPlayer = player->followableComponent->AsignNewPoint();
+			player->followableComponent->AsignNewPoint(this);
 			UpdatePositionAroundPlayer();
-			ChangeState(2);
-		hasAsignedPoint = true;
+			//ChangeState(2);
+			hasAsignedPoint = true;
 		}
 	}
 }
@@ -258,36 +234,18 @@ void ABaseEnemyController::AlertSomeEnemies()
 		}
 	}
 
-	/*if (someEnemyClose)
+}
+
+void ABaseEnemyController::OnEnemyDie()
+{
+	if (AMainPlayer* player = Cast<AMainPlayer>(target))
 	{
-		for (int i = 0; i < outHits.Num() - 1; i++)
+		if (player->followableComponent)
 		{
-			for (int j = 0; j < outHits.Num() - i - 1; j++)
-			{
-				float distanceA = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j].GetActor()->GetActorLocation());
-				float distanceB = FVector::Distance(GetOwner()->GetActorLocation(), outHits[j + 1].GetActor()->GetActorLocation());
-				if (distanceA > distanceB)
-				{
-					FHitResult temp = outHits[j];
-					outHits[j] = outHits[j + 1];
-					outHits[j + 1] = temp;
-				}
-			}
+			player->followableComponent->OnEnemyDie(this);
 		}
-
-		for (int i = 0; i < outHits.Num(); i++)
-		{
-			if (ABaseEnemy* currentEnemy = Cast<ABaseEnemy>(outHits[i].GetActor()))
-			{
-				if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(currentEnemy->Controller))
-				{
-					controller->hasAsignedPoint = false;
-					controller->AsignNextPoint();
-				}
-			}
-
-		}
-	}*/
+	}
+	GetWorld()->DestroyActor(GetPawn());
 }
 
 

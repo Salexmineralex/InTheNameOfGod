@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "BaseEnemyController.h"
 
 
 
@@ -49,5 +50,12 @@ void ABaseEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+void ABaseEnemy::OnDie()
+{
+	if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(GetController()))
+	{
+		controller->OnEnemyDie();
+	}
 }
 

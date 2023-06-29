@@ -16,6 +16,7 @@ UFollowEnemiesPoints::UFollowEnemiesPoints()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
 	// ...
 }
 
@@ -31,6 +32,13 @@ void UFollowEnemiesPoints::BeginPlay()
 	//}
 	//CheckCloseEnemies();
 
+	for (int i = 0; i < 5; i++)
+	{
+		FPointsRange newRange;
+		newRange.radiusRange = 300 + i * 150;
+		newRange.pointsAmount = 4 + i * 3;
+		posibleEnemypoints.Add(newRange);
+	}
 
 }
 	// ...
@@ -45,13 +53,6 @@ void UFollowEnemiesPoints::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
-	if (!canRotatePoints&& parentPoints)
-	{
-		parentPoints->SetWorldRotation(FRotator::ZeroRotator);
-	}
-
-	// ...
 }
 
 void UFollowEnemiesPoints::RecolocatePoints()
@@ -64,68 +65,78 @@ void UFollowEnemiesPoints::RecolocatePoints()
 		float currentAngle = 0;
 
 		FVector origin = GetOwner()->GetActorLocation();
-
-		for (FEnemyFinalPoint point : group.points)
-		{
-			FRandomStream RandomStream(FMath::Rand());
-			float newRadius = RandomStream.FRandRange(radius - 10, radius + 10);
-			float newAngle = RandomStream.FRandRange(currentAngle - 3, currentAngle + 3);
-			float radians = FMath::DegreesToRadians(newAngle);
-
-			FVector finalPos = FVector(FMath::Cos(radians), FMath::Sin(radians), 0.f) * newRadius;
-			point.pointPosition->SetRelativeLocation( finalPos);
-
-			currentAngle += angleDiference;
-
-
-		}
 	}
 }
 
-USceneComponent* UFollowEnemiesPoints::AsignNewPoint()
+void UFollowEnemiesPoints::AsignNewPoint(ABaseEnemyController* enemy)
 {
+	enemiesKnowPlayer.Add(enemy);
+	int totalEnemies = enemiesKnowPlayer.Num()-2;
 
-	currentEnemiesGoingPlayer++;
-	if (currentEnemiesGoingPlayer == 1)
-		return parentPoints;
-	if (currentEnemiesGoingPlayer >= 5)
-		canRotatePoints = false;
-
-	for (FPointsRange& group : posibleEnemypoints)
+	if(totalEnemies>2)
+	for (FPointsRange& range : posibleEnemypoints)
 	{
-		int max = group.points.Num();
-		int currentPoint = 0;
-		
-		for (int i = 0; i < group.points.Num(); i++)
-		{
-			if (i % 2 == 0)
-			{
-				currentPoint = (int)i / 2;
-			}
-			else
-			{
-				currentPoint = (int)max / 2 + (int)i / 2;
-			}
-			if (!group.points[currentPoint].isFull)
-			{
-				group.points[currentPoint].SwitchIsFull();
-				bool tardes = group.points[currentPoint].isFull;
-				return group.points[currentPoint].pointPosition;
-			}
-		}
-		if (max % 2 != 0)
-		{
-			if (!group.points[max-1].isFull)
-			{
-				group.points[max-1].SwitchIsFull();
-				return group.points[max - 1].pointPosition;
-			}
-		}
+		int pointsToPrepare = totalEnemies >= range.pointsAmount ? range.pointsAmount : totalEnemies;
 
+		float angleDiference = 360 / pointsToPrepare;
+		float currentAngle = 0;
+		range.points.Empty();
+		for (int i = 0; i < pointsToPrepare; i++)
+		{
+			float radians = FMath::DegreesToRadians(currentAngle);
+			FVector finalPos = FVector(FMath::Cos(radians), FMath::Sin(radians), 0.f) * range.radiusRange;
+			range.points.Add(finalPos);
+			currentAngle += angleDiference;
+			DrawDebugSphere(GetWorld(), (GetOwner()->GetActorLocation() + finalPos), 10, 5, FColor::Red ,true,300,1,1);
+		}
+		if (totalEnemies <= range.pointsAmount)
+			break;
+		else
+			totalEnemies -= range.pointsAmount;
 
 	}
-	return nullptr;
+
+	if(enemiesKnowPlayer.Num()>1)
+	for (int i = 0; i < enemiesKnowPlayer.Num() - 1; i++)
+	{
+		for (int j = 0; j < enemiesKnowPlayer.Num() - i - 1; j++)
+		{
+			float distanceA = FVector::Distance(GetOwner()->GetActorLocation(), enemiesKnowPlayer[j]->GetPawn()->GetActorLocation());
+			float distanceB = FVector::Distance(GetOwner()->GetActorLocation(), enemiesKnowPlayer[j + 1]->GetPawn()->GetActorLocation());
+			if (distanceA > distanceB)
+			{
+				ABaseEnemyController* temp = enemiesKnowPlayer[j];
+				enemiesKnowPlayer[j] = enemiesKnowPlayer[j + 1];
+				enemiesKnowPlayer[j + 1] = temp;
+			}
+		}
+	}
+	int enemyIndex = enemiesKnowPlayer.Num() - 1;
+	enemiesKnowPlayer[0]->SetCurrentPoint(FVector::ZeroVector);
+	if (enemiesKnowPlayer.Num() > 1)
+	enemiesKnowPlayer[1]->SetCurrentPoint(FVector::ZeroVector);
+
+	if (totalEnemies > 2)
+	{
+		int currentRangePos = 0;
+		int currentRange = 0;
+		for (int i = 2; i < enemiesKnowPlayer.Num(); i++)
+		{
+			enemiesKnowPlayer[i]->SetCurrentPoint(posibleEnemypoints[currentRange].points[currentRangePos]);
+			currentRangePos++;
+			if (currentRangePos >= posibleEnemypoints[currentRange].pointsAmount)
+			{
+				currentRangePos = 0;
+				currentRange++;
+			}
+		}
+
+	}
+
 }
+
+
+
 
 void UFollowEnemiesPoints::CheckCloseEnemies()
 {
@@ -229,5 +240,46 @@ void UFollowEnemiesPoints::CheckCloseEnemies(TArray<FHitResult> outHits)
 
 		}
 	//}
+
+}
+
+void UFollowEnemiesPoints::OnEnemyDie(ABaseEnemyController* enemy)
+{
+	enemiesKnowPlayer.Remove(enemy);
+	int totalEnemies = enemiesKnowPlayer.Num();
+	for (FPointsRange& range : posibleEnemypoints)
+	{
+		int pointsToPrepare = totalEnemies >= range.pointsAmount ? range.pointsAmount : totalEnemies;
+
+		float angleDiference = 360 / pointsToPrepare;
+		float currentAngle = 0;
+		range.points.Empty();
+		for (int i = 0; i < pointsToPrepare; i++)
+		{
+			float radians = FMath::DegreesToRadians(currentAngle);
+			FVector finalPos = FVector(FMath::Cos(radians), FMath::Sin(radians), 0.f) * range.radiusRange;
+			range.points.Add(finalPos);
+			currentAngle += angleDiference;
+			DrawDebugSphere(GetWorld(), (GetOwner()->GetActorLocation() + finalPos), 10, 5, FColor::Red, true, 300, 1, 1);
+		}
+		if (totalEnemies <= range.pointsAmount)
+			break;
+		else
+			totalEnemies -= range.pointsAmount;
+
+	}
+
+	int currentRangePos = 0;
+	int currentRange = 0;
+	for (int i = 0; i < enemiesKnowPlayer.Num(); i++)
+	{
+		enemiesKnowPlayer[i]->SetCurrentPoint(posibleEnemypoints[currentRange].points[currentRangePos]);
+		currentRangePos++;
+		if (currentRangePos >= posibleEnemypoints[currentRange].pointsAmount)
+		{
+			currentRangePos = 0;
+			currentRange++;
+		}
+	}
 
 }
