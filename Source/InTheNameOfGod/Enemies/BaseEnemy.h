@@ -41,6 +41,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* visionTrigger {nullptr};
 
+
 	//varibles
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"),Category =Movement)
@@ -50,6 +51,8 @@ public:
 	ACharacter* player{ nullptr };
 	UFUNCTION(CallInEditor)
 		void OnDie();
+
+	USkeletalMeshComponent* GetSKMesh() { return skeletalMesh; }
 
 
 

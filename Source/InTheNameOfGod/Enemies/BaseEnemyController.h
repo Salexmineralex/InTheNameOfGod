@@ -15,6 +15,9 @@ class UStaticMeshComponent;
  * 
  */
 
+class UFollowEnemiesPoints;
+class UAnimMontage;
+
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
@@ -35,10 +38,22 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		float ameleDistance{ 10 };
+	UPROPERTY(EditAnywhere)
+		float runningSpeed{ 550 };
+	UPROPERTY(EditAnywhere)
+		float walkingSpeed{ 275 };
+	UPROPERTY(EditAnywhere)
+		float combatSpeed{ 200 };
 
+
+	UFollowEnemiesPoints* followableComponent{ nullptr };
 
 	UPROPERTY(EditInstanceOnly)
 	AEnemyManager* enemyManager{nullptr};
+
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* AM_attack_01{ nullptr };
+	
 
 	
 	
@@ -65,6 +80,9 @@ public:
 
 	UFUNCTION(Category = Tasks)
 	void AlertSomeEnemies();
+
+	UFUNCTION()
+	void Attack();
 
 
 

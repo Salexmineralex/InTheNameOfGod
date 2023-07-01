@@ -12,6 +12,8 @@
 
 
 
+
+
 // Sets default values
 ABaseEnemy::ABaseEnemy()
 {
@@ -36,6 +38,7 @@ ABaseEnemy::ABaseEnemy()
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
 // Called every frame

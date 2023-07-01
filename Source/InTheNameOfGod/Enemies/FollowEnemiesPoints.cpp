@@ -70,7 +70,9 @@ void UFollowEnemiesPoints::RecolocatePoints()
 
 void UFollowEnemiesPoints::AsignNewPoint(ABaseEnemyController* enemy)
 {
-	enemiesKnowPlayer.Add(enemy);
+	if(!enemiesKnowPlayer.Contains(enemy))
+		enemiesKnowPlayer.Add(enemy);
+
 	int totalEnemies = enemiesKnowPlayer.Num()-2;
 
 	if(totalEnemies>2)

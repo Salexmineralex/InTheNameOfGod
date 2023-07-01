@@ -10,6 +10,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 
 //project
@@ -46,8 +48,7 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	target = player;
-	bool buenas = false;
-	buenas = Cast<UFollowEnemiesPoints>(player) ? true : false;
+	followableComponent = Cast<AMainPlayer>(target)->followableComponent;
 
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
 }
@@ -100,7 +101,7 @@ void ABaseEnemyController::ChecknearbyEnemy()
 		return ;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 
-	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
 	TArray<AActor*> overlapingActors;
 	visionTrigger->GetOverlappingActors(overlapingActors, ACharacter::StaticClass());
@@ -108,11 +109,24 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	{
 		if (currentActor == target)
 		{
+			//FVector myLocation = GetPawn()->GetActorLocation();
+			//FVector targetLocation = target->GetActorLocation();
+			//
+			//FVector Direction = targetLocation - myLocation;
+			//Direction.Normalize();
+			//FHitResult HitResult;
+			//FCollisionQueryParams Params(NAME_None, false, target);
+			//Params.AddIgnoredActor(GetPawn());
+			//
+			//bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, myLocation, targetLocation, ECC_Visibility, Params);
+			//AActor* actorColl = HitResult.GetActor();
+			//bool isPlayer = HitResult.GetActor() == target;
+
 			myBlackboard->SetValueAsBool("CanSeePlayer", true);
-			return ;
+			return;
 		}
 	}
-			myBlackboard->SetValueAsBool("CanSeePlayer", false);
+	myBlackboard->SetValueAsBool("CanSeePlayer", false);
 	return ;
 }
 
@@ -131,6 +145,20 @@ void ABaseEnemyController::ChangeState(int newState)
 	EnemyState = newState;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsInt("EnemyState", EnemyState);
+	ABaseEnemy* pawn = Cast<ABaseEnemy>(GetPawn());
+	UCharacterMovementComponent* movComp = pawn->GetCharacterMovement();
+	if (newState == 0)
+	{
+		movComp->MaxWalkSpeed = walkingSpeed;
+	}
+	else if (newState == 1 || newState == 2)
+	{
+		movComp->MaxWalkSpeed = runningSpeed;
+	}
+	else if (newState == 4)
+	{
+		movComp->MaxWalkSpeed = combatSpeed;
+	}
 }
 
 bool ABaseEnemyController::CheckCanSeePlayer()
@@ -173,12 +201,17 @@ void ABaseEnemyController::CheckPlayerAmele()
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("IsPlayerAmele", isAmele);
 	if (isAmele)
+	{
 		ChangeState(4);
+		followableComponent->isFightStarted = true;
+	}
 }
 
 
 EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 {
+	if (followableComponent->isFightStarted)
+		ChangeState(2);
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	AActor* playerActor = Cast<AActor>(myBlackboard->GetValueAsObject("TargetActorToFollow"));
 	
@@ -189,18 +222,10 @@ EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 
 void ABaseEnemyController::AsignNextPoint()
 {
-	if (hasAsignedPoint)
-		return;
-	if (AMainPlayer* player = Cast<AMainPlayer>(target))
-	{
-		if (player->followableComponent)
-		{
-			player->followableComponent->AsignNewPoint(this);
-			UpdatePositionAroundPlayer();
-			//ChangeState(2);
-			hasAsignedPoint = true;
-		}
-	}
+
+	followableComponent->AsignNewPoint(this);
+	UpdatePositionAroundPlayer();
+
 }
 
 void ABaseEnemyController::AlertSomeEnemies()
@@ -220,17 +245,17 @@ void ABaseEnemyController::AlertSomeEnemies()
 	TArray<FHitResult> outHits;
 
 	bool someEnemyClose = UKismetSystemLibrary::SphereTraceMultiForObjects(
-		GetWorld(), initPos, endPos, 200, objectTypes, false, actorsToIgnore, EDrawDebugTrace::ForDuration, outHits, true);
+		GetWorld(), initPos, endPos, 900, objectTypes, false, actorsToIgnore, EDrawDebugTrace::ForDuration, outHits, true);
 	if (someEnemyClose)
 	{
-		if (AMainPlayer* player = Cast<AMainPlayer>(target))
+		for (FHitResult object : outHits)
 		{
-			if (player->followableComponent)
+			if (ABaseEnemy* enemy = Cast<ABaseEnemy>(object.GetActor()))
 			{
-				player->followableComponent->CheckCloseEnemies(outHits);
-				UpdatePositionAroundPlayer();
+ 				ABaseEnemyController* control = Cast<ABaseEnemyController>(enemy->GetController());
+				control->ChangeState(1);
+				//control->GetBrainComponent()->GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", true);
 			}
-			hasAsignedPoint = true;
 		}
 	}
 
@@ -246,6 +271,15 @@ void ABaseEnemyController::OnEnemyDie()
 		}
 	}
 	GetWorld()->DestroyActor(GetPawn());
+}
+
+void ABaseEnemyController::Attack()
+{
+	UAnimInstance* abpEnemy = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
+	if (abpEnemy && AM_attack_01)
+	{
+		abpEnemy->Montage_Play(AM_attack_01);
+	}
 }
 
 

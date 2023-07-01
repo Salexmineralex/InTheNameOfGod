@@ -64,7 +64,7 @@ public:
 	float radiusRangeOffset{ 10 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Points)
-		float firstRadius{ 10 };
+	float firstRadius{ 10 };
 
 	UFUNCTION(BlueprintCallable)
 	void RecolocatePoints();
@@ -79,10 +79,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		TArray<ABaseEnemyController*> enemiesKnowPlayer;
 
-	void CheckCloseEnemies();
-	void CheckCloseEnemies(TArray<FHitResult> outhits);
+	bool isFightStarted{ false };
 
 	//enemy
+	void CheckCloseEnemies();
+	void CheckCloseEnemies(TArray<FHitResult> outhits);
 	void AsignNewPoint(ABaseEnemyController* enemy);
 	void OnEnemyDie(ABaseEnemyController* enemy);
 
