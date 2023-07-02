@@ -11,6 +11,7 @@
 #include "GameFramework/Character.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Sound/SoundCue.h"
 
 
 
@@ -39,6 +40,7 @@ void ABaseEnemyController::CPPBeginPlay()
 	}
 	GetAllWayPoints();
 
+	
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
@@ -279,6 +281,22 @@ void ABaseEnemyController::Attack()
 	if (abpEnemy && AM_attack_01)
 	{
 		abpEnemy->Montage_Play(AM_attack_01);
+		if (attackSound01)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
+		}
+	}
+}
+void ABaseEnemyController::Cover()
+{
+	UAnimInstance* abpEnemy = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
+	if (abpEnemy && AM_Cover)
+	{
+		abpEnemy->Montage_Play(AM_Cover);
+		//if (attackSound01)
+		//{
+		//	UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
+		//}
 	}
 }
 

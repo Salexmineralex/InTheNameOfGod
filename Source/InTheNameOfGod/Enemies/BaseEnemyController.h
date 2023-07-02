@@ -11,6 +11,7 @@
 class ACharacter;
 class UBlackboard;
 class UStaticMeshComponent;
+class USoundCue;
 /**
  * 
  */
@@ -50,10 +51,15 @@ private:
 
 	UPROPERTY(EditInstanceOnly)
 	AEnemyManager* enemyManager{nullptr};
-
+	//animations
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AM_attack_01{ nullptr };
-	
+
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* AM_Cover{ nullptr };
+	//sounds
+	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
+	USoundCue* attackSound01{ nullptr };
 
 	
 	
@@ -83,6 +89,8 @@ public:
 
 	UFUNCTION()
 	void Attack();
+	UFUNCTION()
+	void Cover();
 
 
 
