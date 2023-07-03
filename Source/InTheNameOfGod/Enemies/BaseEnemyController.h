@@ -18,7 +18,7 @@ class USoundCue;
 
 class UFollowEnemiesPoints;
 class UAnimMontage;
-
+class UAI_BaseEnemyAnimation;
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
@@ -45,6 +45,8 @@ private:
 		float walkingSpeed{ 275 };
 	UPROPERTY(EditAnywhere)
 		float combatSpeed{ 200 };
+	UPROPERTY(EditAnywhere)
+		float combatDistance{ 80 };
 
 
 	UFollowEnemiesPoints* followableComponent{ nullptr };
@@ -52,6 +54,7 @@ private:
 	UPROPERTY(EditInstanceOnly)
 	AEnemyManager* enemyManager{nullptr};
 	//animations
+	UAI_BaseEnemyAnimation* abpEnemy{ nullptr };
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AM_attack_01{ nullptr };
 
@@ -91,6 +94,8 @@ public:
 	void Attack();
 	UFUNCTION()
 	void Cover();
+	
+	void SpawnSwordSound();
 
 
 
@@ -105,6 +110,8 @@ public:
 	void UpdatePositionAroundPlayer();
 	UFUNCTION(Category = Services)
 	void CheckPlayerAmele();
+	UFUNCTION(Category = Services)
+	void KeepingDistance();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)

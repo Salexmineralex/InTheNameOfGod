@@ -32,13 +32,16 @@ ABaseEnemy::ABaseEnemy()
 	visionTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	visionTrigger->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	visionTrigger->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+
+	swordMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordMesh"));
+	shieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShieldMesh"));
 }
 
 // Called when the game starts or when spawned
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AttachEquipment();
 }
 
 // Called every frame
@@ -60,5 +63,17 @@ void ABaseEnemy::OnDie()
 	{
 		controller->OnEnemyDie();
 	}
+}
+
+void ABaseEnemy::AttachEquipment()
+{
+	FTransform swordTr = GetSKMesh()->GetSocketTransform("Sword_socket", RTS_World);
+	FTransform shieldTr = GetSKMesh()->GetSocketTransform("Shield_socket", RTS_World);
+
+	swordMesh->AttachToComponent(GetSKMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), "Sword_socket");
+	shieldMesh->AttachToComponent(GetSKMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), "Shield_socket");
+
+	swordMesh->SetWorldTransform(swordTr);
+	shieldMesh->SetWorldTransform(shieldTr);
 }
 

@@ -20,6 +20,7 @@
 #include "BaseEnemy.h"
 #include "FollowEnemiesPoints.h"
 #include "InTheNameOfGod/MainPlayer.h"
+#include "InTheNameOfGod/Enemies/AI_BaseEnemyAnimation.h"
 
 
 
@@ -40,6 +41,8 @@ void ABaseEnemyController::CPPBeginPlay()
 	}
 	GetAllWayPoints();
 
+	UAnimInstance* tempAbp = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
+	abpEnemy = Cast<UAI_BaseEnemyAnimation>(tempAbp);
 	
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
@@ -152,14 +155,17 @@ void ABaseEnemyController::ChangeState(int newState)
 	if (newState == 0)
 	{
 		movComp->MaxWalkSpeed = walkingSpeed;
+		abpEnemy->SetIsInFight(false);
 	}
 	else if (newState == 1 || newState == 2)
 	{
 		movComp->MaxWalkSpeed = runningSpeed;
+		abpEnemy->SetIsInFight(false);
 	}
 	else if (newState == 4)
 	{
 		movComp->MaxWalkSpeed = combatSpeed;
+		abpEnemy->SetIsInFight(true);
 	}
 }
 
@@ -202,11 +208,26 @@ void ABaseEnemyController::CheckPlayerAmele()
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("IsPlayerAmele", isAmele);
-	if (isAmele)
+	int state = myBlackboard->GetValueAsInt("EnemyState");
+	if (isAmele&&state != 4)
 	{
 		ChangeState(4);
 		followableComponent->isFightStarted = true;
 	}
+}
+
+void ABaseEnemyController::KeepingDistance()
+{
+	FVector direction = target->GetActorLocation() - GetPawn()->GetActorLocation();
+	direction.Z = 0;
+
+	float distance = direction.Size();
+
+	FVector finalPos = GetPawn()->GetActorLocation() + direction.GetSafeNormal() * (distance - combatDistance);
+
+	MoveToLocation(finalPos);
+	SetFocus(target);
+	
 }
 
 
@@ -277,26 +298,24 @@ void ABaseEnemyController::OnEnemyDie()
 
 void ABaseEnemyController::Attack()
 {
-	UAnimInstance* abpEnemy = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
 	if (abpEnemy && AM_attack_01)
 	{
 		abpEnemy->Montage_Play(AM_attack_01);
-		if (attackSound01)
-		{
-			UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
-		}
 	}
 }
 void ABaseEnemyController::Cover()
 {
-	UAnimInstance* abpEnemy = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
 	if (abpEnemy && AM_Cover)
 	{
 		abpEnemy->Montage_Play(AM_Cover);
-		//if (attackSound01)
-		//{
-		//	UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
-		//}
+		//AM_Cover->
+	}
+}
+void ABaseEnemyController::SpawnSwordSound()
+{
+	if (attackSound01)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
 	}
 }
 

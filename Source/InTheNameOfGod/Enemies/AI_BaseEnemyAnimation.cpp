@@ -4,6 +4,7 @@
 #include "AI_BaseEnemyAnimation.h"
 //project
 #include "BaseEnemy.h"
+#include "BaseEnemyController.h"
 
 void UAI_BaseEnemyAnimation::NativeInitializeAnimation()
 {
@@ -16,4 +17,11 @@ void UAI_BaseEnemyAnimation::NativeUpdateAnimation(float DeltaSeconds)
 		return;
 
 	speed = enemyPawn->GetVelocity().Size();
+}
+void UAI_BaseEnemyAnimation::SpawnSwordSound()
+{
+	if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemyPawn->GetController()))
+	{
+		control->SpawnSwordSound();
+	}
 }

@@ -10,6 +10,7 @@
  * 
  */
 class ABaseEnemy;
+class AbaseEnemyController;
 UCLASS()
 class INTHENAMEOFGOD_API UAI_BaseEnemyAnimation : public UAnimInstance
 {
@@ -28,5 +29,10 @@ private:
 	float speed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool isInFight{ false };
+
+public:
+	void SetIsInFight(bool value) { isInFight = value; }
+	UFUNCTION(BlueprintCallable)
+	void SpawnSwordSound();
 
 };

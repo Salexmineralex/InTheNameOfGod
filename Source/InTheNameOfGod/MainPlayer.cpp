@@ -99,7 +99,7 @@ void AMainPlayer::Move(const FInputActionValue& Value)
 void AMainPlayer::StopMoving(const FInputActionValue& Value)
 {
 	StopAnimMontage(GetCurrentMontage());
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("StopMoving"));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("StopMoving"));
 }
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
@@ -170,7 +170,7 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage, EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput)
 {
 
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
 	
 	if(inputs.Num() == 0 && montage)
 	{

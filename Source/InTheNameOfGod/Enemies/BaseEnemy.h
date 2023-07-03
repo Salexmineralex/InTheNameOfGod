@@ -37,6 +37,11 @@ private:
 	//USceneComponent* rootComponent{ nullptr };
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* skeletalMesh {nullptr};
+
+	UPROPERTY(EditDefaultsOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* swordMesh{nullptr};
+	UPROPERTY(EditDefaultsOnly,Category = Equipment, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* shieldMesh{nullptr};
 public:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* visionTrigger {nullptr};
@@ -53,6 +58,8 @@ public:
 		void OnDie();
 
 	USkeletalMeshComponent* GetSKMesh() { return skeletalMesh; }
+
+	void AttachEquipment();
 
 
 
