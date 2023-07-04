@@ -59,6 +59,12 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 }
 
 
+void ABaseEnemyController::CalculateRandomPercent()
+{
+	int randomNum = FMath::RandRange(0, 100);
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsInt("RandomPercentForCombo", randomNum);
+}
 
 
 
@@ -105,27 +111,13 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	if(!visionTrigger)
 		return ;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-
-	//ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-
 	TArray<AActor*> overlapingActors;
 	visionTrigger->GetOverlappingActors(overlapingActors, ACharacter::StaticClass());
 	for (AActor* currentActor : overlapingActors)
 	{
 		if (currentActor == target)
 		{
-			//FVector myLocation = GetPawn()->GetActorLocation();
-			//FVector targetLocation = target->GetActorLocation();
-			//
-			//FVector Direction = targetLocation - myLocation;
-			//Direction.Normalize();
-			//FHitResult HitResult;
-			//FCollisionQueryParams Params(NAME_None, false, target);
-			//Params.AddIgnoredActor(GetPawn());
-			//
-			//bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, myLocation, targetLocation, ECC_Visibility, Params);
-			//AActor* actorColl = HitResult.GetActor();
-			//bool isPlayer = HitResult.GetActor() == target;
+
 
 			myBlackboard->SetValueAsBool("CanSeePlayer", true);
 			return;
@@ -134,15 +126,21 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	myBlackboard->SetValueAsBool("CanSeePlayer", false);
 	return ;
 }
+void ABaseEnemyController::CheckCombatDistance()
+{
+	float distance = FVector::Distance(target->GetActorLocation(), GetPawn()->GetActorLocation());
+	bool enemyInAttackDistance = distance < combatDistance+40;
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("EnemyInAttackDistance", enemyInAttackDistance);
+	if (distance >= 700)
+		ChangeState(1);
+}
 
 
 void ABaseEnemyController::UpdatePositionAroundPlayer()
 {
-	//if (currentPointAroundPlayer)
-	{
 		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 		myBlackboard->SetValueAsVector("PointAroundPlayer", target->GetActorLocation() + currentPointAroundPlayer);
-	}
 }
 
 void ABaseEnemyController::ChangeState(int newState)
@@ -223,7 +221,7 @@ void ABaseEnemyController::KeepingDistance()
 
 	float distance = direction.Size();
 
-	FVector finalPos = GetPawn()->GetActorLocation() + direction.GetSafeNormal() * (distance - combatDistance);
+	FVector finalPos = GetPawn()->GetActorLocation() + direction.GetSafeNormal() * (distance - combatDistance+10);
 
 	MoveToLocation(finalPos);
 	SetFocus(target);
@@ -298,10 +296,34 @@ void ABaseEnemyController::OnEnemyDie()
 
 void ABaseEnemyController::Attack()
 {
-	if (abpEnemy && AM_attack_01)
+	int randomIndex = FMath::RandRange(0, AM_Attack.Num() - 1);
+	UAnimMontage* tempAttack = AM_Attack[randomIndex];
+	if (abpEnemy && tempAttack)
 	{
-		abpEnemy->Montage_Play(AM_attack_01);
+		abpEnemy->Montage_Play(tempAttack);
 	}
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsFloat("AttackTime", tempAttack->GetPlayLength());
+
+}
+
+bool ABaseEnemyController::ComboAttack()
+{
+	isInCombo = true;
+	UAnimMontage* tempAttack = AM_Attack[currenIndextAttack];
+	currenIndextAttack++;
+	if (currenIndextAttack >= AM_Attack.Num())
+	{
+		currenIndextAttack = 0;
+		isInCombo = false;
+	}
+	if (abpEnemy && tempAttack)
+	{
+		abpEnemy->Montage_Play(tempAttack);
+	}
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsFloat("AttackTime", tempAttack->GetPlayLength());
+	return isInCombo;
 }
 void ABaseEnemyController::Cover()
 {

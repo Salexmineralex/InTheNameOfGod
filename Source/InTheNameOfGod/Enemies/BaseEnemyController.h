@@ -56,13 +56,17 @@ private:
 	//animations
 	UAI_BaseEnemyAnimation* abpEnemy{ nullptr };
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* AM_attack_01{ nullptr };
+	TArray<UAnimMontage*> AM_Attack{ nullptr };
 
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AM_Cover{ nullptr };
 	//sounds
 	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
 	USoundCue* attackSound01{ nullptr };
+
+	//combo attack
+	int currenIndextAttack{ 0 };
+	bool isInCombo{ false };
 
 	
 	
@@ -92,10 +96,16 @@ public:
 
 	UFUNCTION()
 	void Attack();
+
+	UFUNCTION()
+		bool ComboAttack();
+
 	UFUNCTION()
 	void Cover();
 	
 	void SpawnSwordSound();
+
+	void CalculateRandomPercent();
 
 
 
@@ -112,6 +122,7 @@ public:
 	void CheckPlayerAmele();
 	UFUNCTION(Category = Services)
 	void KeepingDistance();
+	void CheckCombatDistance();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)
