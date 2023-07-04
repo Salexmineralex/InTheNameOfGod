@@ -2,11 +2,14 @@
 
 
 #include "BaseEnemy.h"
-
+//unreal
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+//project
 #include "BaseEnemyController.h"
+#include "InTheNameOfGod/LifeComponent.h"
+#include "InTheNameOfGod/AI/WayPoint.h"
 
 
 
@@ -27,6 +30,9 @@ ABaseEnemy::ABaseEnemy()
 	skeletalMesh=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("skeletalMesh"));
 	skeletalMesh->SetupAttachment(RootComponent);
 
+	lifeComponent = CreateDefaultSubobject<ULifeComponent>(TEXT("LifeComponent"));
+
+
 	visionTrigger = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("visionTrigger"));
 	visionTrigger->SetupAttachment(RootComponent);
 	visionTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -42,6 +48,17 @@ void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	AttachEquipment();
+
+}
+void ABaseEnemy::BeUnderAttack()
+{
+	ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController());
+	control->OnReciveAttack();
+}
+void ABaseEnemy::BeHit()
+{
+	ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController());
+	control->OnBeHit();
 }
 
 // Called every frame

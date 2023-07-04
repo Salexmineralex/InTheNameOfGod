@@ -29,10 +29,16 @@ private:
 	float speed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool isInFight{ false };
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	bool isDie{ false };
 public:
 	void SetIsInFight(bool value) { isInFight = value; }
 	UFUNCTION(BlueprintCallable)
 	void SpawnSwordSound();
+	UFUNCTION(BlueprintCallable)
+	void SpawnDamageSound();
+	UFUNCTION(BlueprintCallable)
+	void SpawnDieSound();
+	void KillEnemy() { isDie = true; }
 
 };

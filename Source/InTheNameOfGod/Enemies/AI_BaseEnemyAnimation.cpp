@@ -25,3 +25,17 @@ void UAI_BaseEnemyAnimation::SpawnSwordSound()
 		control->SpawnSwordSound();
 	}
 }
+void UAI_BaseEnemyAnimation::SpawnDamageSound()
+{
+	if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemyPawn->GetController()))
+	{
+		control->SpawnDamageSound();
+	}
+}
+void UAI_BaseEnemyAnimation::SpawnDieSound()
+{
+	if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemyPawn->GetController()))
+	{
+		control->SpawnDamageSound();
+	}
+}

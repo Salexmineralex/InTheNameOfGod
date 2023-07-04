@@ -252,7 +252,8 @@ void UFollowEnemiesPoints::OnEnemyDie(ABaseEnemyController* enemy)
 	for (FPointsRange& range : posibleEnemypoints)
 	{
 		int pointsToPrepare = totalEnemies >= range.pointsAmount ? range.pointsAmount : totalEnemies;
-
+		if (pointsToPrepare == 0)
+			return;
 		float angleDiference = 360 / pointsToPrepare;
 		float currentAngle = 0;
 		range.points.Empty();

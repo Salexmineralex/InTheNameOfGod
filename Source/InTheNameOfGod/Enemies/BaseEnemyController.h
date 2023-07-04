@@ -12,13 +12,12 @@ class ACharacter;
 class UBlackboard;
 class UStaticMeshComponent;
 class USoundCue;
-/**
- * 
- */
-
 class UFollowEnemiesPoints;
 class UAnimMontage;
 class UAI_BaseEnemyAnimation;
+class UBehaviorTreeComponent;
+class AWayPoint;
+
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
@@ -27,13 +26,15 @@ class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (AllowPrivateAccess ="true"))
-		TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
+	TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
 
 	ACharacter* target{ nullptr };
 
 	int wayPointsAmount{ 0 };
-	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* visionTrigger{ nullptr };
+
+
 	UPROPERTY(VisibleAnywhere)
 	FVector currentPointAroundPlayer;
 
@@ -47,16 +48,27 @@ private:
 		float combatSpeed{ 200 };
 	UPROPERTY(EditAnywhere)
 		float combatDistance{ 80 };
+	UPROPERTY(EditAnywhere)
+		float coverProbability{ 50 };
 
 
 	UFollowEnemiesPoints* followableComponent{ nullptr };
 
 	UPROPERTY(EditInstanceOnly)
 	AEnemyManager* enemyManager{nullptr};
+
+
+
+
 	//animations
 	UAI_BaseEnemyAnimation* abpEnemy{ nullptr };
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> AM_Attack{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> AM_BeHit{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> AM_Die{ nullptr };
+
 
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AM_Cover{ nullptr };
@@ -74,6 +86,8 @@ public:
 	//functions
 	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
 	void OnEnemyDie();
+	void OnReciveAttack();
+	void OnBeHit();
 	
 	
 	
@@ -97,12 +111,16 @@ public:
 	void Attack();
 
 	UFUNCTION()
-		void ComboAttack();
+	void ComboAttack();
 
 	UFUNCTION()
 	void Cover();
+	void Uncover();
+	void RecoverAfterHit();
+	void DeleteEnemy();
+
+
 	
-	void SpawnSwordSound();
 
 	void CalculateRandomPercent();
 
@@ -140,6 +158,9 @@ public:
 	UPROPERTY(EditAnywhere, Category=Buscame)
 	bool hasAsignedPoint{ false };
 	
+	//ABP notifies
+	void SpawnSwordSound();
+	void SpawnDamageSound();
 	
 
 

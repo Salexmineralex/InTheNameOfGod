@@ -4,6 +4,7 @@
 #include "BaseEnemyController.h"
 //unreal
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "BrainComponent.h"
 #include "EngineUtils.h"
@@ -21,6 +22,7 @@
 #include "FollowEnemiesPoints.h"
 #include "InTheNameOfGod/MainPlayer.h"
 #include "InTheNameOfGod/Enemies/AI_BaseEnemyAnimation.h"
+#include "InTheNameOfGod/LifeComponent.h"
 
 
 
@@ -56,6 +58,8 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 	followableComponent = Cast<AMainPlayer>(target)->followableComponent;
 
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
+	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
+
 }
 
 
@@ -71,7 +75,6 @@ void ABaseEnemyController::CalculateRandomPercent()
 void ABaseEnemyController::UpdateNextTargetPoint()
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-	int32 idIndex = myBlackboard->GetValueAsInt("WayPointIndex");
 
 	if (!hasCheckLastPlayerPosition)
 	{
@@ -82,22 +85,24 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 		return;
 	}
 
-
-	if (idIndex >= wayPointsAmount)
+	int32 idIndex = myBlackboard->GetValueAsInt("WayPointIndex");
+	if (idIndex >= Cast<ABaseEnemy>(GetPawn())->patrolWayPoints.Num())
 	{
 		idIndex = 0;
 		myBlackboard->SetValueAsInt("WayPointIndex", idIndex);
 	}
 
-	for (TActorIterator<AWayPoint> It(GetWorld()); It; ++It)
-	{
-		AWayPoint* currentWayPoint = *It;
-		if (currentWayPoint->idPosition == idIndex)
-		{
-			myBlackboard->SetValueAsVector("WayPointPosition", currentWayPoint->GetActorLocation());
-			break;
-		}
-	}
+	//for (TActorIterator<AWayPoint> It(GetWorld()); It; ++It)
+	//{
+	//	AWayPoint* currentWayPoint = *It;
+	//	if (currentWayPoint->idPosition == idIndex)
+	//	{
+	//		myBlackboard->SetValueAsVector("WayPointPosition", currentWayPoint->GetActorLocation());
+	//		break;
+	//	}
+	//}
+	FVector newPos = Cast<ABaseEnemy>(GetPawn())->patrolWayPoints[idIndex]->GetActorLocation();
+	myBlackboard->SetValueAsVector("WayPointPosition", newPos);
 
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
 }
@@ -291,7 +296,39 @@ void ABaseEnemyController::OnEnemyDie()
 			player->followableComponent->OnEnemyDie(this);
 		}
 	}
-	GetWorld()->DestroyActor(GetPawn());
+
+	abpEnemy->KillEnemy();
+
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", false);
+}
+void ABaseEnemyController::OnReciveAttack()
+{
+	int randomProbability = FMath::RandRange(0, 100);
+	if (randomProbability <= coverProbability)
+	{
+		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+		myBlackboard->SetValueAsBool("IsUnderAttack", true);
+	}
+}
+void ABaseEnemyController::OnBeHit()//FALTA PASARLE EL FLOAT CON LA CANTIDAD DE DAÑO, PERO PARA PRUEBAS NO LO PONGO
+{
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("BeHit", true);
+	int randomIndex = FMath::RandRange(0, AM_BeHit.Num() - 1);
+	if (AM_BeHit[randomIndex] && abpEnemy)
+	{
+		abpEnemy->Montage_Play(AM_BeHit[randomIndex]);
+		myBlackboard->SetValueAsFloat("AttackTime", AM_BeHit[randomIndex]->GetPlayLength());
+	}
+	ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn());
+	owner->lifeComponent->GetDamage(35);//HABRA QUE PONER EL FLOAT QUE SE LE PASE
+}
+
+void ABaseEnemyController::RecoverAfterHit()
+{
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("BeHit", false);
 }
 
 void ABaseEnemyController::Attack()
@@ -329,8 +366,12 @@ void ABaseEnemyController::Cover()
 	if (abpEnemy && AM_Cover)
 	{
 		abpEnemy->Montage_Play(AM_Cover);
-		//AM_Cover->
 	}
+}
+void ABaseEnemyController::Uncover()
+{
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("IsUnderAttack", false);
 }
 void ABaseEnemyController::SpawnSwordSound()
 {
@@ -338,6 +379,18 @@ void ABaseEnemyController::SpawnSwordSound()
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
 	}
+}
+void ABaseEnemyController::SpawnDamageSound()
+{
+	if (attackSound01)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
+	}
+}
+
+void ABaseEnemyController::DeleteEnemy()
+{
+	GetWorld()->DestroyActor(GetPawn());
 }
 
 
