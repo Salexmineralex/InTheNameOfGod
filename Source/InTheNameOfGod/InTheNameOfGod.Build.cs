@@ -8,13 +8,12 @@ public class InTheNameOfGod : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks","Niagara" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "EnhancedInput", "EnhancedInput" });
 
-		PrivateIncludePaths.AddRange(new string[] { "InTheNameOfGod" }); // Add the path to your custom node class file
+		PrivateIncludePaths.AddRange(new string[] { "InTheNameOfGod"}); // Add the path to your custom node class file
 
-		
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
