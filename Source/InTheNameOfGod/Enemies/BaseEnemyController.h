@@ -66,7 +66,6 @@ private:
 
 	//combo attack
 	int currenIndextAttack{ 0 };
-	bool isInCombo{ false };
 
 	
 	
@@ -98,7 +97,7 @@ public:
 	void Attack();
 
 	UFUNCTION()
-		bool ComboAttack();
+		void ComboAttack();
 
 	UFUNCTION()
 	void Cover();

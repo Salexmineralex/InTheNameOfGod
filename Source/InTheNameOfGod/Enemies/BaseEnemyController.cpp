@@ -307,23 +307,22 @@ void ABaseEnemyController::Attack()
 
 }
 
-bool ABaseEnemyController::ComboAttack()
+void ABaseEnemyController::ComboAttack()
 {
-	isInCombo = true;
 	UAnimMontage* tempAttack = AM_Attack[currenIndextAttack];
 	currenIndextAttack++;
 	if (currenIndextAttack >= AM_Attack.Num())
 	{
 		currenIndextAttack = 0;
-		isInCombo = false;
 	}
+
 	if (abpEnemy && tempAttack)
 	{
 		abpEnemy->Montage_Play(tempAttack);
 	}
+
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-	myBlackboard->SetValueAsFloat("AttackTime", tempAttack->GetPlayLength());
-	return isInCombo;
+	myBlackboard->SetValueAsFloat("AttackTime", tempAttack->GetPlayLength()-0.75f);
 }
 void ABaseEnemyController::Cover()
 {

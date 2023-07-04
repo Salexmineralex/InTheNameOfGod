@@ -6,9 +6,8 @@
 
 EBTNodeResult::Type UBTT_ComboAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    //ABaseEnemyController* control = Cast<ABaseEnemyController>(OwnerComp.GetOwner());
-    //bool finished = control->ComboAttack();
-    //
-    //return finished ? EBTNodeResult::Succeeded : EBTNodeResult::Aborted;
-    return EBTNodeResult::Aborted;
+    ABaseEnemyController* control = Cast<ABaseEnemyController>(OwnerComp.GetOwner());
+    control->ComboAttack();
+    
+    return EBTNodeResult::Succeeded;
 }
