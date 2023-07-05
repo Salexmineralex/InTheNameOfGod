@@ -5,7 +5,10 @@
 
 #include "EnhancedInputComponent.h"
 #include "LifeComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Enemies/BaseEnemy.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -30,8 +33,6 @@ AMainPlayer::AMainPlayer()
 	//
 	// swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
 	// swordCollision->SetupAttachment(swordMesh);
-	
-	// niagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
 	
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
 	
@@ -68,6 +69,11 @@ void AMainPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(enemyTarget)
+	{
+		GetController()->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),enemyTarget->GetActorLocation()));
+	}
+
 }
 
 // Called to bind functionality to input
@@ -91,8 +97,11 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		//Dash
 		EnhancedInputComponent->BindAction(DashAction, ETriggerEvent::Completed, this, &AMainPlayer::Dash);
 
-		//Action
+		//Buff
 		EnhancedInputComponent->BindAction(BuffAction, ETriggerEvent::Started, this, &AMainPlayer::PlayBuffAnim);
+
+		//Lock
+		EnhancedInputComponent->BindAction(LockAction, ETriggerEvent::Started, this, &AMainPlayer::LockEnemy);
 		
 
 	}
@@ -223,7 +232,8 @@ void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* 
 	if(life && canAttack)
 	{
 		StartHitStop();
-		life->GetDamage(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage*HasWeapon));
+		float buffedDamage = (float)isBuffed;
+		life->GetDamage(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
 	}
 
 }
@@ -290,11 +300,13 @@ void AMainPlayer::StopJumping()
 
 void AMainPlayer::Dash()
 {
+	
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Dash"));
 	if(!GetCharacterMovement()->IsFalling() && canDash)
 	{
 		LaunchCharacter( GetActorUpVector()*200+GetActorForwardVector()*600,false,false);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,niagaraDash,GetActorLocation(),UKismetMathLibrary::Conv_VectorToRotator(UKismetMathLibrary::GetForwardVector(GetActorRotation())*-1),FVector(0.75f));
+		
 		canDash = false;
 		FTimerDelegate DashDelegate = FTimerDelegate::CreateUObject( this, &AMainPlayer::SetCanDash, true );
 		GetWorldTimerManager().SetTimer( dashTimer, DashDelegate, 2, false );
@@ -317,16 +329,50 @@ void AMainPlayer::BuffSword()
 	
 	if(!isBuffed)
 	{
+		actualWeapon->niagaraBuffed->SetVisibility(true);
 		isBuffed = true;
 		actualWeapon->swordMesh->SetMaterial(0,actualWeapon->buffSwordMaterial);
 		GetWorld()->GetTimerManager().SetTimer(buffTimer,this, &AMainPlayer::BuffSword, buffTime, false,buffTime);
 
 	}else
 	{
+		actualWeapon->niagaraBuffed->SetVisibility(false);
 		isBuffed = false;
 		actualWeapon->swordMesh->SetMaterial(0,actualWeapon->normalSwordMaterial);
 	}
 	
+}
+
+
+void AMainPlayer::LockEnemy()
+{
+	
+	if(!enemyLocked)
+	{
+		enemyLocked = true;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Lock"));
+		UWorld* world = GetWorld();
+		FVector start = GetActorLocation();
+		FVector end = (UKismetMathLibrary::GetForwardVector(GetFollowCamera()->GetComponentRotation())*5000)+GetActorLocation();
+		TArray<TEnumAsByte<EObjectTypeQuery>> objectTypesArray; // object types to trace
+		objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1));
+		ETraceTypeQuery trace = ETraceTypeQuery::TraceTypeQuery1;
+		auto draw = EDrawDebugTrace::ForDuration;
+		FHitResult hit = FHitResult();
+		FLinearColor color = FLinearColor(0.4f,0.5f,0.4f,1);
+		FLinearColor colorhit = FLinearColor(0.9f,0.4,0.4f,1);
+		
+		if(UKismetSystemLibrary::SphereTraceSingleForObjects(world,start,end,125,objectTypesArray,false,{},draw,hit,true,color,colorhit))
+		{
+			enemyTarget = hit.GetActor();
+	
+		}
+		
+	}else
+	{
+		enemyTarget = nullptr;
+		enemyLocked = false;
+	}
 }
 
 

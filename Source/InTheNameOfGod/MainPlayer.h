@@ -107,6 +107,12 @@ public:
 	bool canAttack = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool enemyLocked = false;
+	
+	UPROPERTY()
+    AActor* enemyTarget = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool isJumping = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -141,6 +147,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* BuffAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* LockAction;
+
 
 	
 protected:
@@ -174,6 +183,9 @@ protected:
 	
 	UFUNCTION(BlueprintCallable,Category="BuffSword")
 	void BuffSword();
+
+	UFUNCTION(BlueprintCallable,Category="Lock")
+	void LockEnemy();
 
 #pragma endregion Input
 	

@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/CapsuleComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -21,6 +23,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UMaterialInstance* normalSwordMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UNiagaraComponent* niagaraBuffed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float damage = 10.0f;

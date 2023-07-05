@@ -15,6 +15,9 @@ AWeapon::AWeapon()
 	swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
 	swordCollision->SetupAttachment(swordMesh);
 
+	niagaraBuffed = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
+	niagaraBuffed->SetupAttachment(swordMesh);
+
 }
 
 // Called when the game starts or when spawned
