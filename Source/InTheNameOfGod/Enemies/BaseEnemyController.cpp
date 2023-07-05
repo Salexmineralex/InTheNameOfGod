@@ -137,8 +137,9 @@ void ABaseEnemyController::CheckCombatDistance()
 	bool enemyInAttackDistance = distance < combatDistance+40;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("EnemyInAttackDistance", enemyInAttackDistance);
-	//if (distance >= 700)
-	//	ChangeState(1);
+	followableComponent->enemiesKnowPlayer.Remove(this);
+	if (distance >= 700)
+		ChangeState(1);
 }
 
 
@@ -202,6 +203,33 @@ bool ABaseEnemyController::CheckCanSeePlayer()
 
 
 }
+void ABaseEnemyController::CheckEnemyCanCombat()
+{
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("CanGoCombat", true);
+	bool isAmele = myBlackboard->GetValueAsBool("IsPlayerAmele");
+	if (isAmele)
+	{
+		if (followableComponent->enemiesKnowPlayer.Num() == 1)
+		{
+			if (followableComponent->enemiesKnowPlayer[0] == this)
+			{
+				myBlackboard->SetValueAsBool("CanGoCombat", true);
+
+			}
+		}
+		else if (followableComponent->enemiesKnowPlayer.Num() >= 2)
+		{
+			if (followableComponent->enemiesKnowPlayer[1] == this)
+			{
+				myBlackboard->SetValueAsBool("CanGoCombat", true);
+
+			}
+		}
+	}
+	myBlackboard->SetValueAsBool("CanGoCombat", false);
+
+}
 
 
 void ABaseEnemyController::SaveLastPlayerPosition()
@@ -217,13 +245,9 @@ void ABaseEnemyController::CheckPlayerAmele()
 	bool isAmele = FVector::Distance(GetPawn()->GetActorLocation(), target->GetActorLocation()) < ameleDistance;
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+
 	myBlackboard->SetValueAsBool("IsPlayerAmele", isAmele);
-	int state = myBlackboard->GetValueAsInt("EnemyState");
-	if (isAmele&&state != 4)
-	{
-		//ChangeState(4);
-		//followableComponent->isFightStarted = true;
-	}
+
 }
 
 void ABaseEnemyController::CheckDistanceToAsignPoint()
@@ -232,7 +256,7 @@ void ABaseEnemyController::CheckDistanceToAsignPoint()
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("DistanceToAsignPoint", isClose);
-	//if(isClose)
+	//if(!isClose)
 	//ChangeState(2);
 }
 
@@ -308,20 +332,21 @@ void ABaseEnemyController::AlertSomeEnemies()
 
 void ABaseEnemyController::OnEnemyDie()
 {
-	if (AMainPlayer* player = Cast<AMainPlayer>(target))
-	{
-		if (player->followableComponent)
-		{
-			player->followableComponent->OnEnemyDie(this);
-		}
-	}
+	//if (AMainPlayer* player = Cast<AMainPlayer>(target))
+	//{
+	//	if (player->followableComponent)
+	//	{
+	//		player->followableComponent->OnEnemyDie(this);
+	//	}
+	//}
+	followableComponent->OnEnemyDie(this);
 
 	abpEnemy->KillEnemy();
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", false);
 }
-void ABaseEnemyController::OnReciveAttack()
+void ABaseEnemyController::OnReciveAttack(float damage)
 {
 	int randomProbability = FMath::RandRange(0, 100);
 	if (randomProbability <= coverProbability)
@@ -329,8 +354,10 @@ void ABaseEnemyController::OnReciveAttack()
 		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 		myBlackboard->SetValueAsBool("IsUnderAttack", true);
 	}
+	else
+		OnBeHit(damage);
 }
-void ABaseEnemyController::OnBeHit()//FALTA PASARLE EL FLOAT CON LA CANTIDAD DE DAÑO, PERO PARA PRUEBAS NO LO PONGO
+void ABaseEnemyController::OnBeHit(float damage )//FALTA PASARLE EL FLOAT CON LA CANTIDAD DE DAÑO, PERO PARA PRUEBAS NO LO PONGO
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("BeHit", true);
@@ -341,7 +368,7 @@ void ABaseEnemyController::OnBeHit()//FALTA PASARLE EL FLOAT CON LA CANTIDAD DE 
 		myBlackboard->SetValueAsFloat("AttackTime", AM_BeHit[randomIndex]->GetPlayLength());
 	}
 	ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn());
-	owner->lifeComponent->GetDamage(35);//HABRA QUE PONER EL FLOAT QUE SE LE PASE
+	owner->lifeComponent->GetDamage(damage);//HABRA QUE PONER EL FLOAT QUE SE LE PASE
 }
 
 void ABaseEnemyController::RecoverAfterHit()
@@ -403,7 +430,14 @@ void ABaseEnemyController::SpawnDamageSound()
 {
 	if (attackSound01)
 	{
-		UGameplayStatics::PlaySoundAtLocation(GetPawn(), attackSound01, GetPawn()->GetActorLocation());
+		UGameplayStatics::PlaySoundAtLocation(GetPawn(), painSound, GetPawn()->GetActorLocation());
+	}
+}
+void ABaseEnemyController::SpawnDieSound()
+{
+	if (attackSound01)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetPawn(), dieSound, GetPawn()->GetActorLocation());
 	}
 }
 

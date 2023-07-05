@@ -53,12 +53,12 @@ void ABaseEnemy::BeginPlay()
 void ABaseEnemy::BeUnderAttack()
 {
 	ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController());
-	control->OnReciveAttack();
+	control->OnReciveAttack(32);
 }
 void ABaseEnemy::BeHit()
 {
 	ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController());
-	control->OnBeHit();
+	control->OnBeHit(32);
 }
 
 // Called every frame

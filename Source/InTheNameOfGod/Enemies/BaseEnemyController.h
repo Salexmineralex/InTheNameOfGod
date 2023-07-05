@@ -77,7 +77,10 @@ private:
 	//sounds
 	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
 	USoundCue* attackSound01{ nullptr };
-
+	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
+	USoundCue* painSound{ nullptr };
+	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
+	USoundCue* dieSound{ nullptr };
 	//combo attack
 	int currenIndextAttack{ 0 };
 
@@ -88,8 +91,8 @@ public:
 	//functions
 	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
 	void OnEnemyDie();
-	void OnReciveAttack();
-	void OnBeHit();
+	void OnReciveAttack(float damage);
+	void OnBeHit(float damage);
 	
 	
 	
@@ -144,6 +147,8 @@ public:
 	void CheckCombatDistance();
 	void CheckDistanceToAsignPoint();
 
+	void CheckEnemyCanCombat();
+
 	//protected:
 	UFUNCTION(BlueprintCallable)
 	void GetAllWayPoints();
@@ -164,6 +169,7 @@ public:
 	//ABP notifies
 	void SpawnSwordSound();
 	void SpawnDamageSound();
+	void SpawnDieSound();
 	
 
 

@@ -9,6 +9,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 //project
 #include "InTheNameOfGod/Enemies/FollowEnemiesPoints.h"
+#include "Enemies/BaseEnemy.h"
+#include "Enemies/BaseEnemyController.h"
 
 
 // Sets default values
@@ -197,16 +199,25 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 
-	TSubclassOf<ULifeComponent> LifeComponent;
-	ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
-	life = OtherActor->FindComponentByClass<ULifeComponent>();
+	//TSubclassOf<ULifeComponent> LifeComponent;
+	//ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
+	//life = OtherActor->FindComponentByClass<ULifeComponent>();
 	
-	if(life && canAttack)
+	
+	//if(life && canAttack)
+	//{
+	//	StartHitStop();
+	//	life->GetDamage(10);
+	//}
+	if (!canAttack)
+		return;
+	if (ABaseEnemy* enemy = Cast<ABaseEnemy>(OtherActor))
 	{
-		StartHitStop();
-		life->GetDamage(10);
+		if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemy->GetController()))
+		{
+			control->OnReciveAttack(35);
+		}
 	}
-
 }
 
 void AMainPlayer::StartHitStop()

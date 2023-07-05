@@ -36,6 +36,6 @@ void UAI_BaseEnemyAnimation::SpawnDieSound()
 {
 	if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemyPawn->GetController()))
 	{
-		control->SpawnDamageSound();
+		control->SpawnDieSound();
 	}
 }
