@@ -14,6 +14,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "InTheNameOfGod/Enemies/FollowEnemiesPoints.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Enemies/BaseEnemy.h"
+#include "Enemies/BaseEnemyController.h"
+
 
 
 // Sets default values
@@ -35,7 +38,13 @@ AMainPlayer::AMainPlayer()
 	// swordCollision->SetupAttachment(swordMesh);
 	
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
-	
+
+	//followableComponent->bWantsBeginPlay = true;
+
+	enemyPointsParent = CreateDefaultSubobject<USceneComponent>(TEXT("EnemyPointsParent"));
+	enemyPointsParent->SetupAttachment(RootComponent);
+	followableComponent->parentPoints = enemyPointsParent;
+
 }
 
 // Called when the game s or when spawned
@@ -68,6 +77,7 @@ void AMainPlayer::BeginPlay()
 void AMainPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 
 	if(enemyTarget)
 	{
@@ -113,6 +123,7 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void AMainPlayer::Move(const FInputActionValue& Value)
 {
 	Super::Move(Value);
+	
 
 	FVector2d VectorMovement = Value.Get<FVector2d>();
 	
@@ -120,8 +131,10 @@ void AMainPlayer::Move(const FInputActionValue& Value)
 	{
 		PlayAnimMontage(this->walkAnimMontage);	
 	}
+
 	
 }
+
 
 void AMainPlayer::StopMoving(const FInputActionValue& Value)
 {
@@ -130,7 +143,7 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 		canAttack = true;
 	}
 	StopAnimMontage(GetCurrentMontage());
-	
+
 }
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
@@ -196,7 +209,7 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage, EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput)
 {
 
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
+	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
 	
 	if(inputs.Num() == 0 && montage)
 	{
@@ -225,17 +238,31 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 
-	TSubclassOf<ULifeComponent> LifeComponent;
-	ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
-	life = OtherActor->FindComponentByClass<ULifeComponent>();
+	//TSubclassOf<ULifeComponent> LifeComponent;
+	//ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
+	//life = OtherActor->FindComponentByClass<ULifeComponent>();
 	
-	if(life && canAttack)
+	
+	//if(life && canAttack)
+	//{
+	//	StartHitStop();
+	//	life->GetDamage(10);
+	//}
+	if (!canAttack)
+		return;
+	if (ABaseEnemy* enemy = Cast<ABaseEnemy>(OtherActor))
 	{
+
 		StartHitStop();
 		float buffedDamage = (float)isBuffed;
 		life->GetDamage(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
-	}
 
+		if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemy->GetController()))
+		{
+			control->OnReciveAttack(35);
+		}
+
+	}
 }
 
 void AMainPlayer::StartHitStop()

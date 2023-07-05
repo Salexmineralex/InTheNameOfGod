@@ -10,6 +10,8 @@
 class USkeletalMeshComponent;
 class UStaticMeshComponent;
 class UBoxComponent;
+class ULifeComponent;
+class AWayPoint;
 
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemy : public ACharacter
@@ -30,6 +32,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(CallInEditor, Category = AAArlon)
+	void BeUnderAttack();
+	UFUNCTION(CallInEditor, Category = AAArlon)
+	void BeHit();
 
 	//Components
 private:
@@ -37,17 +43,38 @@ private:
 	//USceneComponent* rootComponent{ nullptr };
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* skeletalMesh {nullptr};
+
+	UPROPERTY(EditDefaultsOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* swordMesh{nullptr};
+	UPROPERTY(EditDefaultsOnly,Category = Equipment, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* shieldMesh{nullptr};
+
+
 public:
+	UPROPERTY(EditInstanceOnly, Category = Patrol)
+		TArray<AWayPoint*> patrolWayPoints;
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* visionTrigger {nullptr};
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	ULifeComponent* lifeComponent {nullptr};
 
 	//varibles
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"),Category =Movement)
 	float speed{ 10 };
+	
 
 public:
+	UPROPERTY(VisibleAnyWhere)
+	FVector puntoDeida;
 	ACharacter* player{ nullptr };
+	UFUNCTION(CallInEditor)
+		void OnDie();
+
+	USkeletalMeshComponent* GetSKMesh() { return skeletalMesh; }
+
+	void AttachEquipment();
 
 
 

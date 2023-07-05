@@ -57,11 +57,11 @@ void ULifeComponent::GetHeal(float _heal)
 void ULifeComponent::OnDie()
 {
 	//primero el del enemigo que recibira daño mas veces que el player y algo optimizará
-	//if (ABaseEnemy* newChar = Cast<ABaseEnemy>(GetOwner()))//esto con todas las clases que tengan un lifeComponent.
-	//{
-	//	newChar->OnDie();
-	//	return;
-	//}
+	if (ABaseEnemy* newChar = Cast<ABaseEnemy>(GetOwner()))//esto con todas las clases que tengan un lifeComponent.
+	{
+		newChar->OnDie();
+		return;
+	}
 	if (ATestCharacterCanDelete* newChar = Cast<ATestCharacterCanDelete>(GetOwner()))//esto con todas las clases que tengan un lifeComponent.
 	{
 		newChar->OnDie();

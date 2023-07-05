@@ -4,16 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-
+#include "EnemyManager.h"
 #include "BaseEnemyController.generated.h"
 
 
 class ACharacter;
 class UBlackboard;
 class UStaticMeshComponent;
-/**
- * 
- */
+class USoundCue;
+class UFollowEnemiesPoints;
+class UAnimMontage;
+class UAI_BaseEnemyAnimation;
+class UBehaviorTreeComponent;
+class AWayPoint;
 
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
@@ -23,20 +26,77 @@ class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (AllowPrivateAccess ="true"))
-		TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
+	TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
 
 	ACharacter* target{ nullptr };
 
 	int wayPointsAmount{ 0 };
-	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* visionTrigger{ nullptr };
 
-	USceneComponent* currentPointAroundPlayer{ nullptr };
+
+	UPROPERTY(VisibleAnywhere)
+	FVector currentPointAroundPlayer;
+
+	UPROPERTY(EditAnywhere)
+		float ameleDistance{ 100 };
+	UPROPERTY(EditAnywhere)
+		float distanceToAsignPoint{ 450 };
+	UPROPERTY(EditAnywhere)
+		float runningSpeed{ 550 };
+	UPROPERTY(EditAnywhere)
+		float walkingSpeed{ 275 };
+	UPROPERTY(EditAnywhere)
+		float combatSpeed{ 200 };
+	UPROPERTY(EditAnywhere)
+		float combatDistance{ 80 };
+	UPROPERTY(EditAnywhere)
+		float coverProbability{ 50 };
+
+
+	UFollowEnemiesPoints* followableComponent{ nullptr };
+
+	UPROPERTY(EditInstanceOnly)
+	AEnemyManager* enemyManager{nullptr};
+
+
+
+
+	//animations
+	UAI_BaseEnemyAnimation* abpEnemy{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> AM_Attack{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> AM_BeHit{ nullptr };
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	TArray<UAnimMontage*> AM_Die{ nullptr };
+
+
+	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* AM_Cover{ nullptr };
+	//sounds
+	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
+	USoundCue* attackSound01{ nullptr };
+	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
+	USoundCue* painSound{ nullptr };
+	UPROPERTY(EditDefaultsOnly,Category = Sounds ,meta = (AllowPrivateAccess = "true"))
+	USoundCue* dieSound{ nullptr };
+	//combo attack
+	int currenIndextAttack{ 0 };
 
 	
 	
 
-public://tasks
+public:
+	//functions
+	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
+	void OnEnemyDie();
+	void OnReciveAttack(float damage);
+	void OnBeHit(float damage);
+	
+	
+	
+	//tasks
 	UFUNCTION(Category = Tasks)
 	void UpdateNextTargetPoint();
 
@@ -49,6 +109,27 @@ public://tasks
 	UFUNCTION(Category = Tasks)
 	void AsignNextPoint();
 
+	UFUNCTION(Category = Tasks)
+	void AlertSomeEnemies();
+
+	UFUNCTION()
+	void Attack();
+
+	UFUNCTION()
+	void ComboAttack();
+
+	UFUNCTION()
+	void Cover();
+	void Uncover();
+	void RecoverAfterHit();
+	void DeleteEnemy();
+
+
+	
+
+	void CalculateRandomPercent();
+
+
 
 	//Services
 	UFUNCTION(Category = Services)
@@ -59,6 +140,14 @@ public://tasks
 	void SaveLastPlayerPosition();
 	UFUNCTION(Category = Services)
 	void UpdatePositionAroundPlayer();
+	UFUNCTION(Category = Services)
+	void CheckPlayerAmele();
+	UFUNCTION(Category = Services)
+	void KeepingDistance();
+	void CheckCombatDistance();
+	void CheckDistanceToAsignPoint();
+
+	void CheckEnemyCanCombat();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)
@@ -73,7 +162,14 @@ public://tasks
 	bool hasCheckLastPlayerPosition{ true };
 
 	int EnemyState{ 0 };//0:Patrol / 1: FollowPlayer / 2:GoingToFight / 3: WaitingForFight / 4: fighting
+
+	UPROPERTY(EditAnywhere, Category=Buscame)
+	bool hasAsignedPoint{ false };
 	
+	//ABP notifies
+	void SpawnSwordSound();
+	void SpawnDamageSound();
+	void SpawnDieSound();
 	
 
 

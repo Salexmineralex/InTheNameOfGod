@@ -9,19 +9,21 @@
 
 
 #include "FollowEnemiesPoints.generated.h"
-
+class ABaseEnemyController;
 USTRUCT(Blueprintable)
 struct FEnemyFinalPoint
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USceneComponent* pointPosition{nullptr};
+	FVector pointPosition;
 
-		UPROPERTY( BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool isFull{ false };
 
 	AActor* currentEnemyAtPoint{ nullptr };
+
+	void SwitchIsFull() { isFull = !isFull; }
 
 };
 
@@ -30,11 +32,13 @@ struct FPointsRange
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FEnemyFinalPoint> points;
+	TArray<FVector> points;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 		float radiusRange{ 30 };
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 		int pointsAmount{ 0 };
+	UPROPERTY(VisibleAnywhere)
+	int enemiesInAmount{ 0 };
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -60,13 +64,28 @@ public:
 	float radiusRangeOffset{ 10 };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Points)
-		float firstRadius{ 10 };
+	float firstRadius{ 10 };
 
 	UFUNCTION(BlueprintCallable)
 	void RecolocatePoints();
 
+	USceneComponent* parentPoints{ nullptr };
+	bool canRotatePoints{ true };
+	int currentEnemiesGoingPlayer{0};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Points)
+		float checkDistance{ 20 };
+
+	UPROPERTY(VisibleAnywhere)
+		TArray<ABaseEnemyController*> enemiesKnowPlayer;
+
+	//bool isFightStarted{ false };
+
 	//enemy
-	USceneComponent* AsignNewPoint();
+	void CheckCloseEnemies();
+	void CheckCloseEnemies(TArray<FHitResult> outhits);
+	void AsignNewPoint(ABaseEnemyController* enemy);
+	void OnEnemyDie(ABaseEnemyController* enemy);
 
 
 
