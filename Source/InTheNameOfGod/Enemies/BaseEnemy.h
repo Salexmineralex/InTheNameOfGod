@@ -63,8 +63,11 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"),Category =Movement)
 	float speed{ 10 };
+	
 
 public:
+	UPROPERTY(VisibleAnyWhere)
+	FVector puntoDeida;
 	ACharacter* player{ nullptr };
 	UFUNCTION(CallInEditor)
 		void OnDie();

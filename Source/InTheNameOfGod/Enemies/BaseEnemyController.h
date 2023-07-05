@@ -39,7 +39,9 @@ private:
 	FVector currentPointAroundPlayer;
 
 	UPROPERTY(EditAnywhere)
-		float ameleDistance{ 10 };
+		float ameleDistance{ 100 };
+	UPROPERTY(EditAnywhere)
+		float distanceToAsignPoint{ 450 };
 	UPROPERTY(EditAnywhere)
 		float runningSpeed{ 550 };
 	UPROPERTY(EditAnywhere)
@@ -140,6 +142,7 @@ public:
 	UFUNCTION(Category = Services)
 	void KeepingDistance();
 	void CheckCombatDistance();
+	void CheckDistanceToAsignPoint();
 
 	//protected:
 	UFUNCTION(BlueprintCallable)

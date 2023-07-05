@@ -75,7 +75,7 @@ void UFollowEnemiesPoints::AsignNewPoint(ABaseEnemyController* enemy)
 
 	int totalEnemies = enemiesKnowPlayer.Num()-2;
 
-	if(totalEnemies>2)
+	if(totalEnemies>0)
 	for (FPointsRange& range : posibleEnemypoints)
 	{
 		int pointsToPrepare = totalEnemies >= range.pointsAmount ? range.pointsAmount : totalEnemies;
@@ -89,7 +89,6 @@ void UFollowEnemiesPoints::AsignNewPoint(ABaseEnemyController* enemy)
 			FVector finalPos = FVector(FMath::Cos(radians), FMath::Sin(radians), 0.f) * range.radiusRange;
 			range.points.Add(finalPos);
 			currentAngle += angleDiference;
-			DrawDebugSphere(GetWorld(), (GetOwner()->GetActorLocation() + finalPos), 10, 5, FColor::Red ,true,300,1,1);
 		}
 		if (totalEnemies <= range.pointsAmount)
 			break;
@@ -98,7 +97,7 @@ void UFollowEnemiesPoints::AsignNewPoint(ABaseEnemyController* enemy)
 
 	}
 
-	if(enemiesKnowPlayer.Num()>1)
+	if(enemiesKnowPlayer.Num()>2)
 	for (int i = 0; i < enemiesKnowPlayer.Num() - 1; i++)
 	{
 		for (int j = 0; j < enemiesKnowPlayer.Num() - i - 1; j++)
@@ -118,7 +117,7 @@ void UFollowEnemiesPoints::AsignNewPoint(ABaseEnemyController* enemy)
 	if (enemiesKnowPlayer.Num() > 1)
 	enemiesKnowPlayer[1]->SetCurrentPoint(FVector::ZeroVector);
 
-	if (totalEnemies > 2)
+	if (totalEnemies >= 2)
 	{
 		int currentRangePos = 0;
 		int currentRange = 0;
@@ -185,6 +184,7 @@ void UFollowEnemiesPoints::CheckCloseEnemies()
 				{
 					controller->hasAsignedPoint = false;
 					controller->AsignNextPoint();
+					//controller->ChangeState()
 				}
 			}
 

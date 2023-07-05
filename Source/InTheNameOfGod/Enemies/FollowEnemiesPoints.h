@@ -79,7 +79,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		TArray<ABaseEnemyController*> enemiesKnowPlayer;
 
-	bool isFightStarted{ false };
+	//bool isFightStarted{ false };
 
 	//enemy
 	void CheckCloseEnemies();

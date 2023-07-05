@@ -49,7 +49,6 @@ void ABaseEnemyController::CPPBeginPlay()
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
-	ChangeState(0);
 
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
@@ -59,6 +58,7 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
+	ChangeState(0);
 
 }
 
@@ -137,8 +137,8 @@ void ABaseEnemyController::CheckCombatDistance()
 	bool enemyInAttackDistance = distance < combatDistance+40;
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("EnemyInAttackDistance", enemyInAttackDistance);
-	if (distance >= 700)
-		ChangeState(1);
+	//if (distance >= 700)
+	//	ChangeState(1);
 }
 
 
@@ -146,6 +146,13 @@ void ABaseEnemyController::UpdatePositionAroundPlayer()
 {
 		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 		myBlackboard->SetValueAsVector("PointAroundPlayer", target->GetActorLocation() + currentPointAroundPlayer);
+		Cast<ABaseEnemy>(GetPawn())->puntoDeida = target->GetActorLocation() + currentPointAroundPlayer;
+		ABaseEnemy* pawn = Cast<ABaseEnemy>(GetPawn());
+		UCharacterMovementComponent* movComp = pawn->GetCharacterMovement();
+		movComp->MaxWalkSpeed = FVector::Distance(target->GetActorLocation() + currentPointAroundPlayer, pawn->GetActorLocation()) < 500? walkingSpeed : runningSpeed;
+
+		//MoveToLocation(target->GetActorLocation() + currentPointAroundPlayer);
+		//UKismetSystemLibrary::DrawDebugSphere(GetWorld(), target->GetActorLocation() + currentPointAroundPlayer, 50,12, FLinearColor::Blue,0.5f,1);
 }
 
 void ABaseEnemyController::ChangeState(int newState)
@@ -214,9 +221,19 @@ void ABaseEnemyController::CheckPlayerAmele()
 	int state = myBlackboard->GetValueAsInt("EnemyState");
 	if (isAmele&&state != 4)
 	{
-		ChangeState(4);
-		followableComponent->isFightStarted = true;
+		//ChangeState(4);
+		//followableComponent->isFightStarted = true;
 	}
+}
+
+void ABaseEnemyController::CheckDistanceToAsignPoint()
+{
+	bool isClose = FVector::Distance(GetPawn()->GetActorLocation(), target->GetActorLocation()) < distanceToAsignPoint;
+
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	myBlackboard->SetValueAsBool("DistanceToAsignPoint", isClose);
+	//if(isClose)
+	//ChangeState(2);
 }
 
 void ABaseEnemyController::KeepingDistance()
@@ -236,8 +253,8 @@ void ABaseEnemyController::KeepingDistance()
 
 EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 {
-	if (followableComponent->isFightStarted)
-		ChangeState(2);
+	//if (followableComponent->isFightStarted)
+	//	ChangeState(2);
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	AActor* playerActor = Cast<AActor>(myBlackboard->GetValueAsObject("TargetActorToFollow"));
 	
@@ -248,10 +265,12 @@ EPathFollowingRequestResult::Type ABaseEnemyController:: MoveToPlayer()
 
 void ABaseEnemyController::AsignNextPoint()
 {
-
 	followableComponent->AsignNewPoint(this);
+	FVector hola = currentPointAroundPlayer;
 	UpdatePositionAroundPlayer();
-
+	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+	FVector adios = myBlackboard->GetValueAsVector("PointAroundPlayer");
+	float a = 3;
 }
 
 void ABaseEnemyController::AlertSomeEnemies()
@@ -279,8 +298,8 @@ void ABaseEnemyController::AlertSomeEnemies()
 			if (ABaseEnemy* enemy = Cast<ABaseEnemy>(object.GetActor()))
 			{
  				ABaseEnemyController* control = Cast<ABaseEnemyController>(enemy->GetController());
-				control->ChangeState(1);
-				//control->GetBrainComponent()->GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", true);
+				//control->ChangeState(2);
+				control->GetBrainComponent()->GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", true);
 			}
 		}
 	}
