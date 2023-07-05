@@ -348,10 +348,12 @@ void ABaseEnemyController::OnEnemyDie()
 }
 void ABaseEnemyController::OnReciveAttack(float damage)
 {
+		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+		myBlackboard->SetValueAsBool("CanGoCombat", true);
+
 	int randomProbability = FMath::RandRange(0, 100);
 	if (randomProbability <= coverProbability)
 	{
-		UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 		myBlackboard->SetValueAsBool("IsUnderAttack", true);
 	}
 	else
