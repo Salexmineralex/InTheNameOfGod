@@ -6,6 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 //project
 #include "BaseEnemyController.h"
 #include "InTheNameOfGod/LifeComponent.h"
@@ -41,12 +42,18 @@ ABaseEnemy::ABaseEnemy()
 
 	swordMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordMesh"));
 	shieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShieldMesh"));
+
+	whiteballComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("whiteBall"));
+	whiteballComponent->SetupAttachment(RootComponent);
+	whiteballComponent->SetWidgetSpace(EWidgetSpace::Screen);
+
 }
 
 // Called when the game starts or when spawned
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	whiteballComponent->SetVisibility(false);
 	AttachEquipment();
 
 }

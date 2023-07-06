@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 
 #include "BaseEnemy.generated.h"
@@ -58,6 +59,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	ULifeComponent* lifeComponent {nullptr};
+	
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* whiteballComponent {nullptr};
 
 	//varibles
 private:

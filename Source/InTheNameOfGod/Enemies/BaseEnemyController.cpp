@@ -359,7 +359,7 @@ void ABaseEnemyController::OnReciveAttack(float damage)
 	else
 		OnBeHit(damage);
 }
-void ABaseEnemyController::OnBeHit(float damage )//FALTA PASARLE EL FLOAT CON LA CANTIDAD DE DAÑO, PERO PARA PRUEBAS NO LO PONGO
+void ABaseEnemyController::OnBeHit(float damage )//FALTA PASARLE EL FLOAT CON LA CANTIDAD DE DAÃ‘O, PERO PARA PRUEBAS NO LO PONGO
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("BeHit", true);

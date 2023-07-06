@@ -81,7 +81,7 @@ void AMainPlayer::Tick(float DeltaTime)
 
 	if(enemyTarget)
 	{
-		GetController()->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),enemyTarget->GetActorLocation()));
+		GetController()->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),enemyTarget->GetActorLocation()-FVector(0,0,100)));
 	}
 
 }
@@ -238,31 +238,20 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 
-	//TSubclassOf<ULifeComponent> LifeComponent;
-	//ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
-	//life = OtherActor->FindComponentByClass<ULifeComponent>();
-	
-	
-	//if(life && canAttack)
-	//{
-	//	StartHitStop();
-	//	life->GetDamage(10);
-	//}
-	if (!canAttack)
-		return;
-	if (ABaseEnemy* enemy = Cast<ABaseEnemy>(OtherActor))
+
+	if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(OtherActor))
 	{
-
-		StartHitStop();
-		float buffedDamage = (float)isBuffed;
-		life->GetDamage(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
-
-		if (ABaseEnemyController* control = Cast<ABaseEnemyController>(enemy->GetController()))
-		{
-			control->OnReciveAttack(35);
-		}
-
+		TSubclassOf<ULifeComponent> LifeComponent;
+		ULifeComponent* life =  Cast<ULifeComponent>(OtherActor->GetComponentByClass(LifeComponent));
+		life = OtherActor->FindComponentByClass<ULifeComponent>();
+			if (ABaseEnemyController* control = Cast<ABaseEnemyController>(Enemy->GetController()))
+			{
+				StartHitStop();
+				control->OnReciveAttack(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
+			}
+			
 	}
+	
 }
 
 void AMainPlayer::StartHitStop()
@@ -392,11 +381,19 @@ void AMainPlayer::LockEnemy()
 		if(UKismetSystemLibrary::SphereTraceSingleForObjects(world,start,end,125,objectTypesArray,false,{},draw,hit,true,color,colorhit))
 		{
 			enemyTarget = hit.GetActor();
+			if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
+			{
+				Enemy->whiteballComponent->SetVisibility(true);
+			}
 	
 		}
 		
 	}else
 	{
+		if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
+		{
+			Enemy->whiteballComponent->SetVisibility(false);
+		}
 		enemyTarget = nullptr;
 		enemyLocked = false;
 	}
