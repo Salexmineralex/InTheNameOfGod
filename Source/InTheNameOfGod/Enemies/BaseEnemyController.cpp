@@ -52,7 +52,7 @@ void ABaseEnemyController::CPPBeginPlay()
 	//behaviorTree = NewObject<UBehaviorTreeComponent>(this, behaviorTreeType);
 	//behaviorTree->RegisterComponent();
 	
-	//RunBehaviorTree(behaviorTree);
+	RunBehaviorTree(currentTree);
 
 	
 }
@@ -64,7 +64,7 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	target = player;
 	followableComponent = Cast<AMainPlayer>(target)->followableComponent;
-
+	
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
 	ChangeState(0);

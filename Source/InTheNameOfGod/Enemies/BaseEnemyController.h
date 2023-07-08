@@ -28,6 +28,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (AllowPrivateAccess ="true"))
 	TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSoftObjectPtr<UBehaviorTree> behaviorTreeTypePTR{ nullptr };
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UBehaviorTree> behaviorTreeType{ nullptr };
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UBehaviorTree* currentTree{ nullptr };
+
 	ACharacter* target{ nullptr };
 
 	int wayPointsAmount{ 0 };
