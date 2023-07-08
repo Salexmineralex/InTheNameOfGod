@@ -22,16 +22,10 @@ UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
 	GENERATED_BODY()
-		//virtual void BeginPlay()override ; se hace el begin play con blueprints
+		//virtual void BeginPlay()override ;// se hace el begin play con blueprints
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (AllowPrivateAccess ="true"))
-	TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TSoftObjectPtr<UBehaviorTree> behaviorTreeTypePTR{ nullptr };
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UBehaviorTree> behaviorTreeType{ nullptr };
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UBehaviorTree* currentTree{ nullptr };
 

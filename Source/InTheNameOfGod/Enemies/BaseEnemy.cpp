@@ -70,7 +70,7 @@ void ABaseEnemy::BeginPlay()
 		//AIControllerClass = AIControllerEnemyClass.StaticClass();
 		ABaseEnemyController* controller = GetWorld()->SpawnActor<ABaseEnemyController>(AIControllerEnemyClass, GetActorLocation(), GetActorRotation(), SpawnParams);
 		controller->Possess(this);
-		controller->CallBeginPlay();
+		controller->CallBeginPlay();//aqui da una excepcion nose porque pero rula igualmente
 	}
 
 }
