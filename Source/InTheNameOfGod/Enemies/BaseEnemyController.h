@@ -59,6 +59,9 @@ private:
 	UPROPERTY(EditInstanceOnly)
 	AEnemyManager* enemyManager{nullptr};
 
+	bool haveCalledBeginPlay{ false };
+
+
 
 
 
@@ -85,14 +88,17 @@ private:
 	int currenIndextAttack{ 0 };
 
 	
-	
 
 public:
+	//Getters
+	bool HaveCalledBeginPlay()const { return haveCalledBeginPlay; }
+
 	//functions
 	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
 	void OnEnemyDie();
 	void OnReciveAttack(float damage);
 	void OnBeHit(float damage);
+	void CallBeginPlay() { BeginPlay(); }
 	
 	
 	

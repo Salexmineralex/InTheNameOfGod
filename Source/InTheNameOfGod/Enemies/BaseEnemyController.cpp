@@ -37,14 +37,23 @@ void ABaseEnemyController::GetAllWayPoints()
 
 void ABaseEnemyController::CPPBeginPlay()
 {
+	
+	haveCalledBeginPlay = true;
 	if (ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn()))
 	{
 		visionTrigger = owner->visionTrigger;
 	}
 	GetAllWayPoints();
+	
 
 	UAnimInstance* tempAbp = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
 	abpEnemy = Cast<UAI_BaseEnemyAnimation>(tempAbp);
+
+	//behaviorTree = NewObject<UBehaviorTreeComponent>(this, behaviorTreeType);
+	//behaviorTree->RegisterComponent();
+	
+	//RunBehaviorTree(behaviorTree);
+
 	
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
@@ -59,6 +68,7 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
 	ChangeState(0);
+	
 
 }
 
@@ -206,7 +216,7 @@ bool ABaseEnemyController::CheckCanSeePlayer()
 void ABaseEnemyController::CheckEnemyCanCombat()
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-	myBlackboard->SetValueAsBool("CanGoCombat", true);
+	//myBlackboard->SetValueAsBool("CanGoCombat", true);
 	bool isAmele = myBlackboard->GetValueAsBool("IsPlayerAmele");
 	if (isAmele)
 	{
@@ -227,7 +237,8 @@ void ABaseEnemyController::CheckEnemyCanCombat()
 			}
 		}
 	}
-	myBlackboard->SetValueAsBool("CanGoCombat", false);
+	else
+		myBlackboard->SetValueAsBool("CanGoCombat", false);
 
 }
 
