@@ -78,11 +78,21 @@ void AMainPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-
+	
 	if(enemyTarget)
 	{
 		GetController()->SetControlRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),enemyTarget->GetActorLocation()-FVector(0,0,100)));
+		// GetMesh()->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),enemyTarget->GetActorLocation())-FRotator(0,90,0));
+		if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
+		{
+			if(Enemy->lifeComponent->currentLife <= 0)
+			{
+				LockEnemy();
+			}
+			
+		}
 	}
+	
 
 }
 
@@ -247,11 +257,19 @@ void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* 
 			if (ABaseEnemyController* control = Cast<ABaseEnemyController>(Enemy->GetController()))
 			{
 				StartHitStop();
+				actualWeapon->swordCollision->Deactivate();
+				GetWorld()->GetTimerManager().SetTimer(swordCollision,this, &AMainPlayer::Recover_Sword, 0.50f, false,0.50f);
+
 				control->OnReciveAttack(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
 			}
 			
 	}
 	
+}
+
+void AMainPlayer::Recover_Sword()
+{
+	actualWeapon->swordCollision->Activate();
 }
 
 void AMainPlayer::StartHitStop()
@@ -264,6 +282,7 @@ void AMainPlayer::StartHitStop()
 void AMainPlayer::EndHitStop()
 {
 	this->CustomTimeDilation = 1;
+	
 }
 
 
@@ -277,7 +296,6 @@ void AMainPlayer::AttachWeapon()
 
 	if(HasWeapon)
 	{
-
 		FTransform swordtr =  GetMesh()->GetSocketTransform("sword_scabbard",RTS_World);
 		
 		actualWeapon->swordMesh->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),"sword_scabbard");
@@ -384,7 +402,12 @@ void AMainPlayer::LockEnemy()
 			if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
 			{
 				Enemy->whiteballComponent->SetVisibility(true);
+			
 			}
+
+			GetController()->SetIgnoreLookInput(true);
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+			GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	
 		}
 		
@@ -392,8 +415,13 @@ void AMainPlayer::LockEnemy()
 	{
 		if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
 		{
+			
 			Enemy->whiteballComponent->SetVisibility(false);
 		}
+		
+		GetController()->ResetIgnoreLookInput();
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
 		enemyTarget = nullptr;
 		enemyLocked = false;
 	}

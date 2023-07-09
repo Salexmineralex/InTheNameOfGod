@@ -133,6 +133,9 @@ public:
 
 	FTimerHandle buffTimer{};
 
+	FTimerHandle swordCollision{};
+
+
 #pragma endregion Animation
 
 #pragma region Input
@@ -168,8 +171,9 @@ protected:
 	void Attack(const FInputActionValue& Value);
 	
 	void Secondary_Attack(const FInputActionValue& Value);
-
-		
+	
+	void Recover_Sword();
+	
 	UFUNCTION(BlueprintCallable,Category="Animation")
 	void AttachWeapon();
 

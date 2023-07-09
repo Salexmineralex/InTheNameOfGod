@@ -29,10 +29,12 @@ public:
 	void OnDie();
 	float GetLifePercent();
 
-private:
 	UPROPERTY(EditAnywhere,Category = Life,meta=(AllowPrivateAccess ="true"))
 	float maxLife{ 100 };
 	float currentLife{ 100 };
+
+private:
+	
 
 		
 };

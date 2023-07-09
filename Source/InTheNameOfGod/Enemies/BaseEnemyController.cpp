@@ -50,7 +50,6 @@ void ABaseEnemyController::CPPBeginPlay()
 void ABaseEnemyController::CPPBeginPlayPostBT()
 {
 
-
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	target = player;
