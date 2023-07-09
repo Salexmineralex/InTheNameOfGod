@@ -47,10 +47,10 @@ public:
 	// TObjectPtr<USkeletalMeshComponent> swordMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UChildActorComponent* ChildActor;
+	UChildActorComponent* ChildActor = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AWeapon> Weapon;
+	TSubclassOf<AWeapon> Weapon= nullptr;
 
 	UPROPERTY()
 	AWeapon* actualWeapon = nullptr;
@@ -59,7 +59,7 @@ public:
 	// TObjectPtr<UCapsuleComponent> swordCollision;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UNiagaraSystem* niagaraDash;
+	UNiagaraSystem* niagaraDash = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UFollowEnemiesPoints* followableComponent{ nullptr };
@@ -76,23 +76,19 @@ public:
 	TSubclassOf<UUIW_PlayerHUD> playerWidgetType;
 	UUIW_PlayerHUD* playerWidget{ nullptr };
 
-	//life
-	void GetDamage(float damage);
-	void GetHeal(float heal);
-
 #pragma region Animation
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	TMap<EAttackAnimationsCombo, UAnimMontage*> MyAnimationPool;
 	
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* walkAnimMontage;
+	UAnimMontage* walkAnimMontage= nullptr;
 
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* attachAnimationMontage;
+	UAnimMontage* attachAnimationMontage= nullptr;
 
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* buffSwordAnimationMontage;
+	UAnimMontage* buffSwordAnimationMontage= nullptr;
 
 	// UPROPERTY(EditAnywhere)
 	// UMaterialInstance* buffSwordMaterial;
@@ -113,26 +109,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float multiplayerDamage = 0.5f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( BlueprintReadWrite)
     bool HasWeapon = true;
 
 	bool isBuffed = false;
 
 	bool canDash = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( BlueprintReadWrite)
 	bool canAttack = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( BlueprintReadWrite)
 	bool enemyLocked = false;
 	
 	UPROPERTY()
     AActor* enemyTarget = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( BlueprintReadWrite)
 	bool isJumping = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY( BlueprintReadWrite)
 	bool animationBeenPlayed = false;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Animation")
@@ -155,20 +151,20 @@ public:
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* PrimaryAction;
+	class UInputAction* PrimaryAction=nullptr;
 
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* SecondaryAction;
+	class UInputAction* SecondaryAction=nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* DashAction;
+	class UInputAction* DashAction=nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* BuffAction;
+	class UInputAction* BuffAction=nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LockAction;
+	class UInputAction* LockAction=nullptr;
 
 
 
@@ -296,6 +292,11 @@ public:
 	{
 		canDash = bCanDash;
 	}
+
+	void GetDamage(float damage);
+	
+	void GetHeal(float heal);
+
 #pragma endregion GetAndSet
 	
 };
