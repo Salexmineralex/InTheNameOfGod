@@ -33,3 +33,25 @@ void AEnemyManager::OnEnemySeePlayer()
 
 }
 
+void AEnemyManager::SpawnEnemy()
+{
+	//ABaseEnemy* newEnemy = GetWorld()->SpawnActor<ABaseEnemy>();
+	//newEnemy->SetActorLocation(startPos);
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	ABaseEnemy* newEnemy = GetWorld()->SpawnActor<ABaseEnemy>(EnemyTyes[0], startPos, FRotator::ZeroRotator, SpawnParams);
+
+	if (newEnemy)
+	{
+		ABaseEnemyController* controller = GetWorld()->SpawnActor<ABaseEnemyController>(AIControllerEnemyClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+		if (controller)
+		{
+			controller->Possess(newEnemy);
+			controller->CallBeginPlay();
+
+		}
+		newEnemy->SetActorLocation(startPos);
+	}
+}

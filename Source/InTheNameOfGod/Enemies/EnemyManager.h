@@ -30,5 +30,14 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<ABaseEnemy*> enemiesInScene;
+	UPROPERTY(EditAnywhere, Category = Spawn)
+		TArray<TSubclassOf<ABaseEnemy>>EnemyTyes;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<ABaseEnemyController> AIControllerEnemyClass;
+
+	UPROPERTY(EditAnywhere)
+	FVector startPos;
+	UFUNCTION(CallInEditor)
+	void SpawnEnemy();
 
 };
