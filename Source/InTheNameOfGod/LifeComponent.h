@@ -31,6 +31,7 @@ public:
 
 	UPROPERTY(EditAnywhere,Category = Life,meta=(AllowPrivateAccess ="true"))
 	float maxLife{ 100 };
+	UPROPERTY(EditAnywhere,Category = Life,meta=(AllowPrivateAccess ="true"))
 	float currentLife{ 100 };
 
 private:

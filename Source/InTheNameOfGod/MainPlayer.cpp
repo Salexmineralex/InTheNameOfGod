@@ -31,12 +31,6 @@ AMainPlayer::AMainPlayer()
 	ChildActor->bEditableWhenInherited = true;
     
     ChildActor->CreateChildActor();
-	//
-	// swordMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("swordMesh"));
-	// swordMesh->SetupAttachment(RootComponent);
-	//
-	// swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
-	// swordCollision->SetupAttachment(swordMesh);
 	
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
 
@@ -71,10 +65,11 @@ void AMainPlayer::BeginPlay()
 		actualWeapon->swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	
+
 	playerWidget = CreateWidget<UUIW_PlayerHUD>(GetWorld(), playerWidgetType);
 	playerWidget->AddToViewport();
-	playerWidget->SetLifeBar(1);
-	playerWidget->SetManaBar(0);
+	playerWidget->LifeBar()->SetPercent(1);
+	playerWidget->ManaBar()->SetPercent(1);
 
 }
 
@@ -214,6 +209,7 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 	}
 	GetWorld()->GetTimerManager().ClearTimer(attachWeapon);
 	animationBeenPlayed = false;
+
 	StartCombo(inputsArray);
 	
 }
@@ -231,6 +227,7 @@ void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimM
 		canAttack = false;
 		animationBeenPlayed = true;
 		PlayAnimMontage(montage);
+		actualWeapon->swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		input = EAttackInputCombo::defaults;
 		GetWorld()->GetTimerManager().SetTimer(attachWeapon,this, &AMainPlayer::AttachAnimation, 5.0f, false,5.0f);
 
@@ -263,7 +260,7 @@ void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* 
 			{
 				StartHitStop();
 				actualWeapon->swordCollision->Deactivate();
-				GetWorld()->GetTimerManager().SetTimer(swordCollision,this, &AMainPlayer::Recover_Sword, 0.50f, false,0.50f);
+				GetWorld()->GetTimerManager().SetTimer(swordCollision,this, &AMainPlayer::Recover_Sword, 0.20f, false,0.20f);
 
 				control->OnReciveAttack(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
 			}
@@ -356,11 +353,16 @@ void AMainPlayer::Dash()
 
 void AMainPlayer::PlayBuffAnim()
 {
-	if(!HasWeapon)
+	if(actualMana >= 35)
 	{
-		AttachWeapon();
+		
+		if(!HasWeapon)
+		{
+			AttachWeapon();
+		}
+		PlayAnimMontage(buffSwordAnimationMontage);
 	}
-	PlayAnimMontage(buffSwordAnimationMontage);
+
 }
 
 void AMainPlayer::BuffSword()
@@ -370,9 +372,10 @@ void AMainPlayer::BuffSword()
 	{
 		actualWeapon->niagaraBuffed->SetVisibility(true);
 		isBuffed = true;
+		SetActualMana(actualMana - 35);
 		actualWeapon->swordMesh->SetMaterial(0,actualWeapon->buffSwordMaterial);
 		GetWorld()->GetTimerManager().SetTimer(buffTimer,this, &AMainPlayer::BuffSword, buffTime, false,buffTime);
-
+		
 	}else
 	{
 		actualWeapon->niagaraBuffed->SetVisibility(false);
@@ -385,7 +388,7 @@ void AMainPlayer::BuffSword()
 
 void AMainPlayer::LockEnemy()
 {
-	
+	lifeComponent->GetDamage(10);
 	if(!enemyLocked)
 	{
 		enemyLocked = true;
@@ -435,12 +438,12 @@ void AMainPlayer::LockEnemy()
 void AMainPlayer::GetDamage(float damage)
 {
 	lifeComponent->GetDamage(damage);
-	playerWidget->SetLifeBar(lifeComponent->GetLifePercent());
+	playerWidget->LifeBar()->SetPercent(lifeComponent->GetLifePercent());
 }
 void AMainPlayer::GetHeal(float heal)
 {
 	lifeComponent->GetHeal(heal);
-	playerWidget->SetLifeBar(lifeComponent->GetLifePercent());
+	playerWidget->LifeBar()->SetPercent(lifeComponent->GetLifePercent());
 }
 
 

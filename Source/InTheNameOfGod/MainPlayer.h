@@ -8,6 +8,8 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "Weapon.h"
+#include "Components/ProgressBar.h"
+#include "UI/UIW_PlayerHUD.h"
 #include "MainPlayer.generated.h"
 
 
@@ -43,9 +45,6 @@ public:
 	// Sets default values for this character's properties
 	AMainPlayer();
 
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	// TObjectPtr<USkeletalMeshComponent> swordMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UChildActorComponent* ChildActor = nullptr;
 	
@@ -55,9 +54,6 @@ public:
 	UPROPERTY()
 	AWeapon* actualWeapon = nullptr;
 
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	// TObjectPtr<UCapsuleComponent> swordCollision;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UNiagaraSystem* niagaraDash = nullptr;
 
@@ -90,12 +86,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* buffSwordAnimationMontage= nullptr;
 
-	// UPROPERTY(EditAnywhere)
-	// UMaterialInstance* buffSwordMaterial;
-	//
-	// UPROPERTY(EditAnywhere)
-	// UMaterialInstance* normalSwordMaterial;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackAnimationsCombo lightCombo = EAttackAnimationsCombo::StartAnim;
 	
@@ -105,6 +95,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float buffTime = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float actualMana = 100;
+
+	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxMana = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float multiplayerDamage = 0.5f;
@@ -143,6 +141,8 @@ public:
 	FTimerHandle buffTimer{};
 
 	FTimerHandle swordCollision{};
+	
+	FTimerHandle hitStop{};
 
 
 #pragma endregion Animation
@@ -224,8 +224,6 @@ public:
 	void SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage,EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput);
 
 
-	FTimerHandle hitStop;
-
 	UFUNCTION(Category="Damage")
 	void StartHitStop();
 
@@ -296,6 +294,27 @@ public:
 	void GetDamage(float damage);
 	
 	void GetHeal(float heal);
+
+	[[nodiscard]] float ActualMana() const
+	{
+		return actualMana;
+	}
+
+	void SetActualMana(float ActualMana)
+	{
+		actualMana += ActualMana;
+		if (actualMana > MaxMana)
+		{
+			actualMana = MaxMana;
+		}
+		if(actualMana <= 0)
+		{
+			actualMana = 0;
+		}
+		actualMana = ActualMana;
+
+		playerWidget->ManaBar()->SetPercent(actualMana/MaxMana);
+	}
 
 #pragma endregion GetAndSet
 	
