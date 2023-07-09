@@ -25,7 +25,36 @@
 #include "InTheNameOfGod/LifeComponent.h"
 
 
-
+//void ABaseEnemyController::BeginPlay()
+//{
+//	if (!GetPawn())
+//		return;
+//	haveCalledBeginPlay = true;
+//	if (ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn()))
+//	{
+//		visionTrigger = owner->visionTrigger;
+//	}
+//	GetAllWayPoints();
+//
+//
+//	UAnimInstance* tempAbp = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
+//	abpEnemy = Cast<UAI_BaseEnemyAnimation>(tempAbp);
+//
+//	//behaviorTree = NewObject<UBehaviorTreeComponent>(this, behaviorTreeType);
+//	//behaviorTree->RegisterComponent();
+//
+//	RunBehaviorTree(currentTree);
+//
+//	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
+//	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+//	target = player;
+//	followableComponent = Cast<AMainPlayer>(target)->followableComponent;
+//
+//	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
+//	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
+//	ChangeState(0);
+//
+//}
 void ABaseEnemyController::GetAllWayPoints()
 {
 	TArray<AActor*> allWayPoints;
@@ -37,14 +66,20 @@ void ABaseEnemyController::GetAllWayPoints()
 
 void ABaseEnemyController::CPPBeginPlay()
 {
+	
+	haveCalledBeginPlay = true;
 	if (ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn()))
 	{
 		visionTrigger = owner->visionTrigger;
 	}
 	GetAllWayPoints();
+	
 
 	UAnimInstance* tempAbp = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
 	abpEnemy = Cast<UAI_BaseEnemyAnimation>(tempAbp);
+	
+	RunBehaviorTree(currentTree);
+
 	
 }
 void ABaseEnemyController::CPPBeginPlayPostBT()
@@ -54,10 +89,11 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	target = player;
 	followableComponent = Cast<AMainPlayer>(target)->followableComponent;
-
+	
 	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
 	ChangeState(0);
+	
 
 }
 
@@ -117,12 +153,23 @@ void ABaseEnemyController::ChecknearbyEnemy()
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	TArray<AActor*> overlapingActors;
 	visionTrigger->GetOverlappingActors(overlapingActors, ACharacter::StaticClass());
+			DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), target->GetActorLocation(), FColor::Red, false,0.2);
 	for (AActor* currentActor : overlapingActors)
 	{
 		if (currentActor == target)
 		{
+			FVector startPos = GetPawn()->GetActorLocation();
+			FVector direction = target->GetActorLocation() - GetPawn()->GetActorLocation();
+			FHitResult* hitActor = new FHitResult;
+			FCollisionQueryParams CQP;
+			bool hiting = GetWorld()->LineTraceSingleByChannel(*hitActor, startPos, target->GetActorLocation(), ECC_Visibility, CQP);
+			if (hiting)
+			{
+				DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), target->GetActorLocation(), FColor::Blue, true);
 
 
+			}
+			//UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(),startPos,target->GetActorLocation(),)
 			myBlackboard->SetValueAsBool("CanSeePlayer", true);
 			return;
 		}
@@ -205,7 +252,7 @@ bool ABaseEnemyController::CheckCanSeePlayer()
 void ABaseEnemyController::CheckEnemyCanCombat()
 {
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-	myBlackboard->SetValueAsBool("CanGoCombat", true);
+	//myBlackboard->SetValueAsBool("CanGoCombat", true);
 	bool isAmele = myBlackboard->GetValueAsBool("IsPlayerAmele");
 	if (isAmele)
 	{
@@ -226,7 +273,8 @@ void ABaseEnemyController::CheckEnemyCanCombat()
 			}
 		}
 	}
-	myBlackboard->SetValueAsBool("CanGoCombat", false);
+	else
+		myBlackboard->SetValueAsBool("CanGoCombat", false);
 
 }
 
@@ -322,7 +370,8 @@ void ABaseEnemyController::AlertSomeEnemies()
 			{
  				ABaseEnemyController* control = Cast<ABaseEnemyController>(enemy->GetController());
 				//control->ChangeState(2);
-				control->GetBrainComponent()->GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", true);
+				if(!control->GetBrainComponent()->GetBlackboardComponent()->GetValueAsBool("CanSeePlayer"))
+					control->GetBrainComponent()->GetBlackboardComponent()->SetValueAsBool("CanSeePlayer", true);
 			}
 		}
 	}

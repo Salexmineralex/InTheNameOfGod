@@ -55,6 +55,23 @@ void ABaseEnemy::BeginPlay()
 	Super::BeginPlay();
 	whiteballComponent->SetVisibility(false);
 	AttachEquipment();
+	if (ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController()))
+	{
+		if (!control->HaveCalledBeginPlay())
+		{
+			control->CallBeginPlay();
+		}
+	}
+	else
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		//SpawnParams.Instigator = Instigator;
+		//AIControllerClass = AIControllerEnemyClass.StaticClass();
+		ABaseEnemyController* controller = GetWorld()->SpawnActor<ABaseEnemyController>(AIControllerEnemyClass, GetActorLocation(), GetActorRotation(), SpawnParams);
+		controller->Possess(this);
+		controller->CallBeginPlay();//aqui da una excepcion nose porque pero rula igualmente
+	}
 
 }
 void ABaseEnemy::BeUnderAttack()

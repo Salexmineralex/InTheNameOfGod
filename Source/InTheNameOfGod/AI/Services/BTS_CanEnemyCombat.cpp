@@ -7,6 +7,6 @@ void UBTS_CanEnemyCombat::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 	ABaseEnemyController* control = Cast<ABaseEnemyController>(OwnerComp.GetOwner());
-	control->CheckDistanceToAsignPoint();
+	control->CheckEnemyCanCombat();
 
 }

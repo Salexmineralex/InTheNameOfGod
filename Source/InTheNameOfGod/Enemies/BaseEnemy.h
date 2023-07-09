@@ -13,6 +13,7 @@ class UStaticMeshComponent;
 class UBoxComponent;
 class ULifeComponent;
 class AWayPoint;
+class ABaseEnemyController;
 
 UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemy : public ACharacter
@@ -49,6 +50,8 @@ private:
 		UStaticMeshComponent* swordMesh{nullptr};
 	UPROPERTY(EditDefaultsOnly,Category = Equipment, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* shieldMesh{nullptr};
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+		TSubclassOf<ABaseEnemyController> AIControllerEnemyClass;
 
 
 public:

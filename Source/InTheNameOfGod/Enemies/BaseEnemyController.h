@@ -22,11 +22,12 @@ UCLASS()
 class INTHENAMEOFGOD_API ABaseEnemyController : public AAIController
 {
 	GENERATED_BODY()
-		//virtual void BeginPlay()override ; se hace el begin play con blueprints
+		//virtual void BeginPlay()override ;// se hace el begin play con blueprints
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,meta = (AllowPrivateAccess ="true"))
-	TSoftObjectPtr<UBehaviorTree> behaviorTree{nullptr};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UBehaviorTree* currentTree{ nullptr };
 
 	ACharacter* target{ nullptr };
 
@@ -59,6 +60,9 @@ private:
 	UPROPERTY(EditInstanceOnly)
 	AEnemyManager* enemyManager{nullptr};
 
+	bool haveCalledBeginPlay{ false };
+
+
 
 
 
@@ -85,14 +89,17 @@ private:
 	int currenIndextAttack{ 0 };
 
 	
-	
 
 public:
+	//Getters
+	bool HaveCalledBeginPlay()const { return haveCalledBeginPlay; }
+
 	//functions
 	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
 	void OnEnemyDie();
 	void OnReciveAttack(float damage);
 	void OnBeHit(float damage);
+	void CallBeginPlay() { BeginPlay(); }
 	
 	
 	
