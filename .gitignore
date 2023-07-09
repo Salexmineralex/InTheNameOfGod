@@ -1,12 +1,12 @@
 # Visual Studio 2015 user specific files
 .vs/
+.idea/
 
 # Compiled Object files
 *.slo
 *.lo
 *.o
 *.obj
-
 
 # Precompiled Headers
 *.gch
@@ -73,7 +73,8 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
-
-#BatFiles
-*.bat
-Jenkinsfile.txt
+Jenkinsfile
+Plugins/Developer/RiderLink/*
+.idea
+.vs
+.vsconfig
