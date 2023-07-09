@@ -16,6 +16,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Enemies/BaseEnemy.h"
 #include "Enemies/BaseEnemyController.h"
+#include "UI/UIW_PlayerHUD.h"
 
 
 
@@ -45,6 +46,7 @@ AMainPlayer::AMainPlayer()
 	enemyPointsParent->SetupAttachment(RootComponent);
 	followableComponent->parentPoints = enemyPointsParent;
 
+	lifeComponent = CreateDefaultSubobject<ULifeComponent>(TEXT("Life Component"));
 }
 
 // Called when the game s or when spawned
@@ -69,7 +71,10 @@ void AMainPlayer::BeginPlay()
 		actualWeapon->swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	
-
+	playerWidget = CreateWidget<UUIW_PlayerHUD>(GetWorld(), playerWidgetType);
+	playerWidget->AddToViewport();
+	playerWidget->SetLifeBar(1);
+	playerWidget->SetManaBar(0);
 
 }
 
@@ -425,6 +430,17 @@ void AMainPlayer::LockEnemy()
 		enemyTarget = nullptr;
 		enemyLocked = false;
 	}
+}
+
+void AMainPlayer::GetDamage(float damage)
+{
+	lifeComponent->GetDamage(damage);
+	playerWidget->SetLifeBar(lifeComponent->GetLifePercent());
+}
+void AMainPlayer::GetHeal(float heal)
+{
+	lifeComponent->GetHeal(heal);
+	playerWidget->SetLifeBar(lifeComponent->GetLifePercent());
 }
 
 

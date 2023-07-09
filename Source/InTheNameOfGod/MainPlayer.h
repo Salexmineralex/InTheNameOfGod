@@ -12,6 +12,7 @@
 
 
 class UFollowEnemiesPoints;
+class UUIW_PlayerHUD;
 
 UENUM(BlueprintType)
 enum class EAttackAnimationsCombo : uint8
@@ -66,6 +67,18 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	USceneComponent* enemyPointsParent{nullptr};
 	USceneComponent* GetPointsParent() { return enemyPointsParent; }
+
+	UPROPERTY(EditAnywhere)
+	class ULifeComponent* lifeComponent{nullptr};
+
+	//UI
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUIW_PlayerHUD> playerWidgetType;
+	UUIW_PlayerHUD* playerWidget{ nullptr };
+
+	//life
+	void GetDamage(float damage);
+	void GetHeal(float heal);
 
 #pragma region Animation
 

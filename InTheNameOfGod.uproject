@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"Engine",
 				"BlueprintGraph",
-				"AIModule"
+				"AIModule",
+				"UMG"
 			]
 		}
 	],
