@@ -16,14 +16,14 @@ public:
 	// Sets default values for this actor's properties
 	APickableObject();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<UMeshComponent> objectMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UStaticMeshComponent> objectMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> objectCollision;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	TSubClas* pawnThatCanPickUP;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	TSubclassOf<ACharacter> pawnThatCanPickUP;
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,6 +37,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UFUNCTION(BlueprintImplementableEvent)
-    void Pickuped();
+    void Pickuped(AActor* OverlappedActor);
 
 };

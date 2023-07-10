@@ -25,7 +25,7 @@ ULifeComponent::ULifeComponent()
 void ULifeComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	currentLife = maxLife;
+	// currentLife = maxLife;
 	// ...
 	
 }
@@ -42,7 +42,6 @@ void ULifeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 void ULifeComponent::GetDamage(float _damage)
 {
 	currentLife -= _damage;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("EnemyHited %f"),currentLife));
 	if (currentLife <= 0)
 	{
 		OnDie();
@@ -74,5 +73,5 @@ void ULifeComponent::OnDie()
 }
 float ULifeComponent::GetLifePercent()
 {
-	return ((currentLife * 100) / maxLife);
+	return ((currentLife) / maxLife);
 }

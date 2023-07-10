@@ -70,15 +70,11 @@ public:
 	//UI
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUIW_PlayerHUD> playerWidgetType;
+	UPROPERTY(BlueprintReadWrite)
 	UUIW_PlayerHUD* playerWidget{ nullptr };
 
 #pragma region Animation
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	TMap<EAttackAnimationsCombo, UAnimMontage*> MyAnimationPool;
-	
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* walkAnimMontage= nullptr;
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* attachAnimationMontage= nullptr;
@@ -99,10 +95,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float actualMana = 100;
 
-	
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MaxMana = 100;
+	float maxMana = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float multiplayerDamage = 0.5f;
@@ -150,23 +144,24 @@ public:
 #pragma region Input
 
 	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* PrimaryAction=nullptr;
 
 	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* SecondaryAction=nullptr;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* DashAction=nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* BuffAction=nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LockAction=nullptr;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputComponent* MyPlayerInputComponent=nullptr;
 
 	
 protected:
@@ -291,8 +286,10 @@ public:
 		canDash = bCanDash;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	void GetDamage(float damage);
-	
+
+	UFUNCTION(BlueprintCallable)
 	void GetHeal(float heal);
 
 	[[nodiscard]] float ActualMana() const
@@ -300,20 +297,30 @@ public:
 		return actualMana;
 	}
 
-	void SetActualMana(float ActualMana)
+	UFUNCTION(BlueprintCallable)
+	void AddMana(float addedMana)
 	{
-		actualMana += ActualMana;
-		if (actualMana > MaxMana)
+		actualMana += addedMana;
+		if (actualMana > maxMana)
 		{
-			actualMana = MaxMana;
+			actualMana = maxMana;
 		}
+		
+
+		playerWidget->ManaBar()->SetPercent(actualMana/maxMana);
+	}
+	
+	void SubstractMana(float substractedMana)
+	{
+		actualMana -= substractedMana;
+	
 		if(actualMana <= 0)
 		{
 			actualMana = 0;
 		}
-		actualMana = ActualMana;
+		
 
-		playerWidget->ManaBar()->SetPercent(actualMana/MaxMana);
+		playerWidget->ManaBar()->SetPercent(actualMana/maxMana);
 	}
 
 #pragma endregion GetAndSet
