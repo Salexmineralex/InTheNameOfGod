@@ -6,13 +6,3 @@
 #include "Components/ProgressBar.h"
 
 
-void UUIW_PlayerHUD::SetLifeBar(float percent)
-{
-	lifeBar->SetPercent(percent);
-}
-
-void UUIW_PlayerHUD::SetManaBar(float percent)
-{
-	manaBar->SetPercent(percent);
-
-}

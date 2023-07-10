@@ -14,6 +14,7 @@ AWeapon::AWeapon()
 
 	swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
 	swordCollision->SetupAttachment(swordMesh);
+	swordCollision->SetCollisionResponseToChannel(ECC_GameTraceChannel1,ECR_Overlap);
 
 	niagaraBuffed = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara Component"));
 	niagaraBuffed->SetupAttachment(swordMesh);

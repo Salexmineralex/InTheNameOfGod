@@ -8,11 +8,15 @@
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "Weapon.h"
+#include "Components/ProgressBar.h"
+#include "UI/UIW_PlayerHUD.h"
 #include "MainPlayer.generated.h"
 
 
 class UFollowEnemiesPoints;
 class UUIW_PlayerHUD;
+class UUW_MenuWidget;
+
 
 UENUM(BlueprintType)
 enum class EAttackAnimationsCombo : uint8
@@ -43,9 +47,6 @@ public:
 	// Sets default values for this character's properties
 	AMainPlayer();
 
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	// TObjectPtr<USkeletalMeshComponent> swordMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UChildActorComponent* ChildActor = nullptr;
 	
@@ -55,9 +56,6 @@ public:
 	UPROPERTY()
 	AWeapon* actualWeapon = nullptr;
 
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	// TObjectPtr<UCapsuleComponent> swordCollision;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UNiagaraSystem* niagaraDash = nullptr;
 
@@ -74,27 +72,27 @@ public:
 	//UI
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUIW_PlayerHUD> playerWidgetType;
+	UPROPERTY(BlueprintReadWrite)
 	UUIW_PlayerHUD* playerWidget{ nullptr };
+
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<UUW_MenuWidget> mainMenuWidget;
+	UPROPERTY() UUW_MenuWidget* mainMenuWidgetInstance = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+		UCameraComponent* firstPersonCamera = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+		FName levelToLoad;
+
 
 #pragma region Animation
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	TMap<EAttackAnimationsCombo, UAnimMontage*> MyAnimationPool;
-	
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* walkAnimMontage= nullptr;
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* attachAnimationMontage= nullptr;
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* buffSwordAnimationMontage= nullptr;
-
-	// UPROPERTY(EditAnywhere)
-	// UMaterialInstance* buffSwordMaterial;
-	//
-	// UPROPERTY(EditAnywhere)
-	// UMaterialInstance* normalSwordMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackAnimationsCombo lightCombo = EAttackAnimationsCombo::StartAnim;
@@ -105,6 +103,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float buffTime = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float actualMana = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float maxMana = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float multiplayerDamage = 0.5f;
@@ -143,6 +147,8 @@ public:
 	FTimerHandle buffTimer{};
 
 	FTimerHandle swordCollision{};
+	
+	FTimerHandle hitStop{};
 
 
 #pragma endregion Animation
@@ -150,23 +156,24 @@ public:
 #pragma region Input
 
 	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* PrimaryAction=nullptr;
 
 	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* SecondaryAction=nullptr;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* DashAction=nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* BuffAction=nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LockAction=nullptr;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputComponent* MyPlayerInputComponent=nullptr;
 
 	
 protected:
@@ -223,8 +230,6 @@ public:
 	UFUNCTION(BlueprintCallable,meta=(ExpandEnumAsExecs="input"))
 	void SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage,EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput);
 
-
-	FTimerHandle hitStop;
 
 	UFUNCTION(Category="Damage")
 	void StartHitStop();
@@ -293,9 +298,42 @@ public:
 		canDash = bCanDash;
 	}
 
+	UFUNCTION(BlueprintCallable)
 	void GetDamage(float damage);
-	
+
+	UFUNCTION(BlueprintCallable)
 	void GetHeal(float heal);
+
+	[[nodiscard]] float ActualMana() const
+	{
+		return actualMana;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void AddMana(float addedMana)
+	{
+		actualMana += addedMana;
+		if (actualMana > maxMana)
+		{
+			actualMana = maxMana;
+		}
+		
+
+		playerWidget->ManaBar()->SetPercent(actualMana/maxMana);
+	}
+	
+	void SubstractMana(float substractedMana)
+	{
+		actualMana -= substractedMana;
+	
+		if(actualMana <= 0)
+		{
+			actualMana = 0;
+		}
+		
+
+		playerWidget->ManaBar()->SetPercent(actualMana/maxMana);
+	}
 
 #pragma endregion GetAndSet
 	

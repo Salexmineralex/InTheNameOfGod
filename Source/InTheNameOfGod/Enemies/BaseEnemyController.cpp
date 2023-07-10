@@ -25,36 +25,6 @@
 #include "InTheNameOfGod/LifeComponent.h"
 
 
-//void ABaseEnemyController::BeginPlay()
-//{
-//	if (!GetPawn())
-//		return;
-//	haveCalledBeginPlay = true;
-//	if (ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn()))
-//	{
-//		visionTrigger = owner->visionTrigger;
-//	}
-//	GetAllWayPoints();
-//
-//
-//	UAnimInstance* tempAbp = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
-//	abpEnemy = Cast<UAI_BaseEnemyAnimation>(tempAbp);
-//
-//	//behaviorTree = NewObject<UBehaviorTreeComponent>(this, behaviorTreeType);
-//	//behaviorTree->RegisterComponent();
-//
-//	RunBehaviorTree(currentTree);
-//
-//	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
-//	ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-//	target = player;
-//	followableComponent = Cast<AMainPlayer>(target)->followableComponent;
-//
-//	myBlackboard->SetValueAsObject("TargetActorToFollow", player);
-//	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
-//	ChangeState(0);
-//
-//}
 void ABaseEnemyController::GetAllWayPoints()
 {
 	TArray<AActor*> allWayPoints;
@@ -71,12 +41,14 @@ void ABaseEnemyController::CPPBeginPlay()
 	if (ABaseEnemy* owner = Cast<ABaseEnemy>(GetPawn()))
 	{
 		visionTrigger = owner->visionTrigger;
+		myWayPoints = owner->patrolWayPoints;
 	}
-	GetAllWayPoints();
+	//GetAllWayPoints();
 	
 
 	UAnimInstance* tempAbp = Cast<ABaseEnemy>(GetPawn())->GetSKMesh()->GetAnimInstance();
 	abpEnemy = Cast<UAI_BaseEnemyAnimation>(tempAbp);
+
 	
 	RunBehaviorTree(currentTree);
 
@@ -94,7 +66,6 @@ void ABaseEnemyController::CPPBeginPlayPostBT()
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", true);
 	ChangeState(0);
 	
-
 }
 
 
@@ -116,17 +87,18 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 		hasCheckLastPlayerPosition = true;
 		FVector newPos = myBlackboard->GetValueAsVector("LastPlayerPosKnown");
 		myBlackboard->SetValueAsVector("WayPointPosition",newPos);
-
+	
 		return;
 	}
-
+	
 	int32 idIndex = myBlackboard->GetValueAsInt("WayPointIndex");
-	if (idIndex >= Cast<ABaseEnemy>(GetPawn())->patrolWayPoints.Num())
+	//if (idIndex >= Cast<ABaseEnemy>(GetPawn())->patrolWayPoints.Num())
+		if (idIndex >= myWayPoints.Num())
 	{
 		idIndex = 0;
 		myBlackboard->SetValueAsInt("WayPointIndex", idIndex);
 	}
-
+	
 	//for (TActorIterator<AWayPoint> It(GetWorld()); It; ++It)
 	//{
 	//	AWayPoint* currentWayPoint = *It;
@@ -136,7 +108,8 @@ void ABaseEnemyController::UpdateNextTargetPoint()
 	//		break;
 	//	}
 	//}
-	FVector newPos = Cast<ABaseEnemy>(GetPawn())->patrolWayPoints[idIndex]->GetActorLocation();
+	//FVector newPos = Cast<ABaseEnemy>(GetPawn())->patrolWayPoints[idIndex]->GetActorLocation();
+	FVector newPos = myWayPoints[idIndex]->GetActorLocation();
 	myBlackboard->SetValueAsVector("WayPointPosition", newPos);
 
 	myBlackboard->SetValueAsInt("WayPointIndex", idIndex + 1);
@@ -380,19 +353,13 @@ void ABaseEnemyController::AlertSomeEnemies()
 
 void ABaseEnemyController::OnEnemyDie()
 {
-	//if (AMainPlayer* player = Cast<AMainPlayer>(target))
-	//{
-	//	if (player->followableComponent)
-	//	{
-	//		player->followableComponent->OnEnemyDie(this);
-	//	}
-	//}
 	followableComponent->OnEnemyDie(this);
 
 	abpEnemy->KillEnemy();
 
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
 	myBlackboard->SetValueAsBool("IsAbleToRunBehaviorTree", false);
+	enemyManager->OnEnemyDie();
 }
 void ABaseEnemyController::OnReciveAttack(float damage)
 {

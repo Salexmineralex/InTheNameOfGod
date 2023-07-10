@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 //project
 #include "BaseEnemyController.h"
+#include "PickableObject.h"
 #include "InTheNameOfGod/LifeComponent.h"
 #include "InTheNameOfGod/AI/WayPoint.h"
 
@@ -55,23 +56,23 @@ void ABaseEnemy::BeginPlay()
 	Super::BeginPlay();
 	whiteballComponent->SetVisibility(false);
 	AttachEquipment();
-	if (ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController()))
-	{
-		if (!control->HaveCalledBeginPlay())
-		{
-			control->CallBeginPlay();
-		}
-	}
-	else
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		//SpawnParams.Instigator = Instigator;
-		//AIControllerClass = AIControllerEnemyClass.StaticClass();
-		ABaseEnemyController* controller = GetWorld()->SpawnActor<ABaseEnemyController>(AIControllerEnemyClass, GetActorLocation(), GetActorRotation(), SpawnParams);
-		controller->Possess(this);
-		controller->CallBeginPlay();//aqui da una excepcion nose porque pero rula igualmente
-	}
+	//if (ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController()))
+	//{
+	//	if (!control->HaveCalledBeginPlay())
+	//	{
+	//		control->CallBeginPlay();
+	//	}
+	//}
+	//else
+	//{
+	//	FActorSpawnParameters SpawnParams;
+	//	SpawnParams.Owner = this;
+	//	//SpawnParams.Instigator = Instigator;
+	//	//AIControllerClass = AIControllerEnemyClass.StaticClass();
+	//	ABaseEnemyController* controller = GetWorld()->SpawnActor<ABaseEnemyController>(AIControllerEnemyClass, GetActorLocation(), GetActorRotation(), SpawnParams);
+	//	controller->Possess(this);
+	//	controller->CallBeginPlay();//aqui da una excepcion nose porque pero rula igualmente
+	//}
 
 }
 void ABaseEnemy::BeUnderAttack()
@@ -103,6 +104,22 @@ void ABaseEnemy::OnDie()
 	if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(GetController()))
 	{
 		controller->OnEnemyDie();
+		if(FMath::RandRange(0, 100) <= 35)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			FTransform SpawnTransform;
+			SpawnTransform.SetLocation(GetActorLocation());
+			if(FMath::RandRange(0, 100) <= 50)
+			{
+				APickableObject* SpawnedObject = GetWorld()->SpawnActor<APickableObject>(Mana_Potion, SpawnTransform, SpawnParams);
+			}else
+			{
+				APickableObject* SpawnedObject = GetWorld()->SpawnActor<APickableObject>(Life_Potion, SpawnTransform, SpawnParams);
+			}
+		}
+		
 	}
 }
 

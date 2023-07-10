@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/RichTextBlock.h"
+#include "Components/TextBlock.h"
 #include "UIW_PlayerHUD.generated.h"
 
 class UProgressBar;
@@ -22,8 +24,29 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UProgressBar* manaBar{nullptr};
+	
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	URichTextBlock* textTutorial{nullptr};
 public:
-	void SetLifeBar(float percent);
-	void SetManaBar(float percent);
 
+
+	[[nodiscard]] UProgressBar* LifeBar() const
+	{
+		return lifeBar;
+	}
+
+	void SetLifeBar(UProgressBar* LifeBar)
+	{
+		lifeBar = LifeBar;
+	}
+
+	[[nodiscard]] UProgressBar* ManaBar() const
+	{
+		return manaBar;
+	}
+
+	void SetManaBar(UProgressBar* ManaBar)
+	{
+		manaBar = ManaBar;
+	}
 };

@@ -39,6 +39,12 @@ public:
 	UFUNCTION(CallInEditor, Category = AAArlon)
 	void BeHit();
 
+	UPROPERTY(EditAnywhere, Category = ObjectsToSpawn)
+	TSubclassOf<class APickableObject> Life_Potion;
+
+	UPROPERTY(EditAnywhere, Category = ObjectsToSpawn)
+	TSubclassOf<class APickableObject> Mana_Potion;
+
 	//Components
 private:
 
@@ -57,6 +63,7 @@ private:
 public:
 	UPROPERTY(EditInstanceOnly, Category = Patrol)
 		TArray<AWayPoint*> patrolWayPoints;
+
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* visionTrigger {nullptr};
 
@@ -82,6 +89,7 @@ public:
 	USkeletalMeshComponent* GetSKMesh() { return skeletalMesh; }
 
 	void AttachEquipment();
+	void SetWayPoints(TArray<AWayPoint*> points) { patrolWayPoints = points; }
 
 
 
