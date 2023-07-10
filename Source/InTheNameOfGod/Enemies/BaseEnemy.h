@@ -59,6 +59,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 		TSubclassOf<ABaseEnemyController> AIControllerEnemyClass;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* swordCollision{nullptr};
+
 
 public:
 	UPROPERTY(EditInstanceOnly, Category = Patrol)
@@ -90,6 +93,8 @@ public:
 
 	void AttachEquipment();
 	void SetWayPoints(TArray<AWayPoint*> points) { patrolWayPoints = points; }
+	UFUNCTION()
+	void DamagePlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 

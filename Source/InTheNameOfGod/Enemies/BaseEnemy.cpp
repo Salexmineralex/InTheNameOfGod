@@ -12,6 +12,7 @@
 #include "PickableObject.h"
 #include "InTheNameOfGod/LifeComponent.h"
 #include "InTheNameOfGod/AI/WayPoint.h"
+#include "InTheNameOfGod/MainPlayer.h"
 
 
 
@@ -34,7 +35,7 @@ ABaseEnemy::ABaseEnemy()
 
 	lifeComponent = CreateDefaultSubobject<ULifeComponent>(TEXT("LifeComponent"));
 
-
+	
 	visionTrigger = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("visionTrigger"));
 	visionTrigger->SetupAttachment(RootComponent);
 	visionTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -43,6 +44,9 @@ ABaseEnemy::ABaseEnemy()
 
 	swordMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordMesh"));
 	shieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShieldMesh"));
+	swordCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision"));
+	swordCollision->SetupAttachment(swordMesh);
+	swordCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseEnemy::DamagePlayer);
 
 	whiteballComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("whiteBall"));
 	whiteballComponent->SetupAttachment(RootComponent);
@@ -135,3 +139,10 @@ void ABaseEnemy::AttachEquipment()
 	shieldMesh->SetWorldTransform(shieldTr);
 }
 
+void ABaseEnemy::DamagePlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AMainPlayer* playerHit = Cast<AMainPlayer>(OtherActor))
+	{
+		playerHit->GetDamage(50);
+	}
+}
