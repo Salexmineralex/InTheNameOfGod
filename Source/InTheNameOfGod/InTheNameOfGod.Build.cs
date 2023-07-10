@@ -10,7 +10,7 @@ public class InTheNameOfGod : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule", "GameplayTasks","Niagara","UMG" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "EnhancedInput", "EnhancedInput","Slate","SlateCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput","Slate","SlateCore" });
 
 		PrivateIncludePaths.AddRange(new string[] { "InTheNameOfGod"}); // Add the path to your custom node class file
 
