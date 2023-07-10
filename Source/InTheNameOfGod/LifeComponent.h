@@ -25,12 +25,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UFUNCTION(BlueprintCallable)
 	void GetDamage(float _damage);
+	UFUNCTION(BlueprintCallable)
 	void GetHeal(float _heal);
 	void OnDie();
 	float GetLifePercent();
 
 	UPROPERTY(EditAnywhere,Category = Life,meta=(AllowPrivateAccess ="true"))
 	float maxLife{ 100 };
+	UPROPERTY(EditAnywhere,Category = Life,meta=(AllowPrivateAccess ="true"))
 	float currentLife{ 100 };
 
 private:

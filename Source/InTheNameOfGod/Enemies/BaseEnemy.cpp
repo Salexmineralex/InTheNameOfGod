@@ -9,6 +9,7 @@
 #include "Components/WidgetComponent.h"
 //project
 #include "BaseEnemyController.h"
+#include "PickableObject.h"
 #include "InTheNameOfGod/LifeComponent.h"
 #include "InTheNameOfGod/AI/WayPoint.h"
 
@@ -103,6 +104,22 @@ void ABaseEnemy::OnDie()
 	if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(GetController()))
 	{
 		controller->OnEnemyDie();
+		if(FMath::RandRange(0, 100) <= 35)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+			FTransform SpawnTransform;
+			SpawnTransform.SetLocation(GetActorLocation());
+			if(FMath::RandRange(0, 100) <= 50)
+			{
+				APickableObject* SpawnedObject = GetWorld()->SpawnActor<APickableObject>(Mana_Potion, SpawnTransform, SpawnParams);
+			}else
+			{
+				APickableObject* SpawnedObject = GetWorld()->SpawnActor<APickableObject>(Life_Potion, SpawnTransform, SpawnParams);
+			}
+		}
+		
 	}
 }
 

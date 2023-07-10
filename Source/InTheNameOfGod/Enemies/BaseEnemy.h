@@ -39,6 +39,12 @@ public:
 	UFUNCTION(CallInEditor, Category = AAArlon)
 	void BeHit();
 
+	UPROPERTY(EditAnywhere, Category = ObjectsToSpawn)
+	TSubclassOf<class APickableObject> Life_Potion;
+
+	UPROPERTY(EditAnywhere, Category = ObjectsToSpawn)
+	TSubclassOf<class APickableObject> Mana_Potion;
+
 	//Components
 private:
 

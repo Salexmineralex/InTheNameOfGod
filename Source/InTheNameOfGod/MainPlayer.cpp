@@ -33,12 +33,6 @@ AMainPlayer::AMainPlayer()
 	ChildActor->bEditableWhenInherited = true;
     
     ChildActor->CreateChildActor();
-	//
-	// swordMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("swordMesh"));
-	// swordMesh->SetupAttachment(RootComponent);
-	//
-	// swordCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("swordCollision"));
-	// swordCollision->SetupAttachment(swordMesh);
 	
 	followableComponent = CreateDefaultSubobject<UFollowEnemiesPoints>(TEXT("Followable component"));
 
@@ -73,10 +67,11 @@ void AMainPlayer::BeginPlay()
 		actualWeapon->swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	
+
 	playerWidget = CreateWidget<UUIW_PlayerHUD>(GetWorld(), playerWidgetType);
 	playerWidget->AddToViewport();
-	playerWidget->SetLifeBar(1);
-	playerWidget->SetManaBar(0);
+	playerWidget->LifeBar()->SetPercent(lifeComponent->GetLifePercent());
+	playerWidget->ManaBar()->SetPercent(actualMana/maxMana);
 
 
 	if (GetGameInstance()->GetWorld()->GetMapName() == ("UEDPIE_0_MainMenu"))
@@ -117,7 +112,7 @@ void AMainPlayer::Tick(float DeltaTime)
 void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	MyPlayerInputComponent = PlayerInputComponent;
 	//Moving
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -150,14 +145,14 @@ void AMainPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void AMainPlayer::Move(const FInputActionValue& Value)
 {
 	Super::Move(Value);
-	
-
-	FVector2d VectorMovement = Value.Get<FVector2d>();
-	
-	if(VectorMovement.Y > 0 && GetCurrentMontage() != walkAnimMontage)
-	{
-		PlayAnimMontage(this->walkAnimMontage);	
-	}
+	//
+	//
+	// FVector2d VectorMovement = Value.Get<FVector2d>();
+	//
+	// if(VectorMovement.Y > 0 && GetCurrentMontage() != walkAnimMontage)
+	// {
+	// 	PlayAnimMontage(this->walkAnimMontage);	
+	// }
 
 	
 }
@@ -175,43 +170,46 @@ void AMainPlayer::StopMoving(const FInputActionValue& Value)
 
 void AMainPlayer::Attack(const FInputActionValue& Value)
 {
-
-	if(animationBeenPlayed == false && inputArray.Num() >= 1)
+	if(canAttacked)
 	{
-		inputArray.Reset();
+		if(animationBeenPlayed == false && inputArray.Num() >= 1)
+		{
+			inputArray.Reset();
 				
-	}
+		}
 	
-	if(canAttack)
-	{
-		inputArray.Push(EAttackInputCombo::Light);
-		TArray<EAttackInputCombo> copyinput;
-		copyinput.Append(inputArray);
-		StartCombo_Implementation(copyinput);
+		if(canAttack)
+		{
+			inputArray.Push(EAttackInputCombo::Light);
+			TArray<EAttackInputCombo> copyinput;
+			copyinput.Append(inputArray);
+			StartCombo_Implementation(copyinput);
 		
+		}
 	}
-	
-	
 
 }
 
 void AMainPlayer::Secondary_Attack(const FInputActionValue& Value)
 {
-
-	if(animationBeenPlayed == false && inputArray.Num() >= 1)
+	if(canAttacked)
 	{
-		inputArray.Reset();
+		if(animationBeenPlayed == false && inputArray.Num() >= 1)
+		{
+			inputArray.Reset();
 				
-	}
+		}
 	
 	
-	if(canAttack)
-	{
-		inputArray.Push(EAttackInputCombo::Strong);
-		TArray<EAttackInputCombo> copyinput;
-		copyinput.Append(inputArray);
-		StartCombo_Implementation(copyinput);
+		if(canAttack)
+		{
+			inputArray.Push(EAttackInputCombo::Strong);
+			TArray<EAttackInputCombo> copyinput;
+			copyinput.Append(inputArray);
+			StartCombo_Implementation(copyinput);
+		}
 	}
+
 	
 
 }
@@ -226,6 +224,7 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 	}
 	GetWorld()->GetTimerManager().ClearTimer(attachWeapon);
 	animationBeenPlayed = false;
+
 	StartCombo(inputsArray);
 	
 }
@@ -236,13 +235,13 @@ void AMainPlayer::StartCombo_Implementation(const TArray<EAttackInputCombo> &inp
 void AMainPlayer::SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage, EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput)
 {
 
-	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Inputs NUM -> %d"), inputs.Num()));
 	
 	if(inputs.Num() == 0 && montage)
 	{
 		canAttack = false;
 		animationBeenPlayed = true;
 		PlayAnimMontage(montage);
+		actualWeapon->swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		input = EAttackInputCombo::defaults;
 		GetWorld()->GetTimerManager().SetTimer(attachWeapon,this, &AMainPlayer::AttachAnimation, 5.0f, false,5.0f);
 
@@ -275,7 +274,7 @@ void AMainPlayer::DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* 
 			{
 				StartHitStop();
 				actualWeapon->swordCollision->Deactivate();
-				GetWorld()->GetTimerManager().SetTimer(swordCollision,this, &AMainPlayer::Recover_Sword, 0.50f, false,0.50f);
+				GetWorld()->GetTimerManager().SetTimer(swordCollision,this, &AMainPlayer::Recover_Sword, 0.20f, false,0.20f);
 
 				control->OnReciveAttack(actualWeapon->Damage()+(actualWeapon->Damage()*multiplayerDamage)*(float)isBuffed);
 			}
@@ -334,12 +333,16 @@ void AMainPlayer::AttachWeapon()
 
 void AMainPlayer::Jump()
 {
-	Super::Jump();
+	if(canJumped)
+	{
+		Super::Jump();
 
-	isJumping = true;
+		isJumping = true;
 
-	GetWorld()->GetTimerManager().SetTimer(stopJump,this, &AMainPlayer::StopJumping, 0.1f, false,0.1f);
+		GetWorld()->GetTimerManager().SetTimer(stopJump,this, &AMainPlayer::StopJumping, 0.1f, false,0.1f);
 
+	}
+	
 }
 
 void AMainPlayer::StopJumping()
@@ -351,28 +354,39 @@ void AMainPlayer::StopJumping()
 
 void AMainPlayer::Dash()
 {
-	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Dash"));
-	if(!GetCharacterMovement()->IsFalling() && canDash)
+	if(canDashed)
 	{
-		LaunchCharacter( GetActorUpVector()*200+GetActorForwardVector()*600,false,false);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,niagaraDash,GetActorLocation(),UKismetMathLibrary::Conv_VectorToRotator(UKismetMathLibrary::GetForwardVector(GetActorRotation())*-1),FVector(0.75f));
+		if(!GetCharacterMovement()->IsFalling() && canDash)
+		{
+			LaunchCharacter( GetActorUpVector()*200+GetActorForwardVector()*600,false,false);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,niagaraDash,GetActorLocation(),UKismetMathLibrary::Conv_VectorToRotator(UKismetMathLibrary::GetForwardVector(GetActorRotation())*-1),FVector(0.75f));
 		
-		canDash = false;
-		FTimerDelegate DashDelegate = FTimerDelegate::CreateUObject( this, &AMainPlayer::SetCanDash, true );
-		GetWorldTimerManager().SetTimer( dashTimer, DashDelegate, 2, false );
+			canDash = false;
+			FTimerDelegate DashDelegate = FTimerDelegate::CreateUObject( this, &AMainPlayer::SetCanDash, true );
+			GetWorldTimerManager().SetTimer( dashTimer, DashDelegate, 2, false );
 		
+		}
 	}
+
 
 }
 
 void AMainPlayer::PlayBuffAnim()
 {
-	if(!HasWeapon)
+	if(canBuffed)
 	{
-		AttachWeapon();
+		if(actualMana >= 35)
+		{
+		
+			if(!HasWeapon)
+			{
+				AttachWeapon();
+			}
+			PlayAnimMontage(buffSwordAnimationMontage);
+		}
 	}
-	PlayAnimMontage(buffSwordAnimationMontage);
+
+
 }
 
 void AMainPlayer::BuffSword()
@@ -382,9 +396,10 @@ void AMainPlayer::BuffSword()
 	{
 		actualWeapon->niagaraBuffed->SetVisibility(true);
 		isBuffed = true;
+		SubstractMana(35);
 		actualWeapon->swordMesh->SetMaterial(0,actualWeapon->buffSwordMaterial);
 		GetWorld()->GetTimerManager().SetTimer(buffTimer,this, &AMainPlayer::BuffSword, buffTime, false,buffTime);
-
+		
 	}else
 	{
 		actualWeapon->niagaraBuffed->SetVisibility(false);
@@ -397,62 +412,64 @@ void AMainPlayer::BuffSword()
 
 void AMainPlayer::LockEnemy()
 {
-	
-	if(!enemyLocked)
+	if(canLocked)
 	{
-		enemyLocked = true;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Lock"));
-		UWorld* world = GetWorld();
-		FVector start = GetActorLocation();
-		FVector end = (UKismetMathLibrary::GetForwardVector(GetFollowCamera()->GetComponentRotation())*5000)+GetActorLocation();
-		TArray<TEnumAsByte<EObjectTypeQuery>> objectTypesArray; // object types to trace
-		objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1));
-		ETraceTypeQuery trace = ETraceTypeQuery::TraceTypeQuery1;
-		auto draw = EDrawDebugTrace::ForDuration;
-		FHitResult hit = FHitResult();
-		FLinearColor color = FLinearColor(0.4f,0.5f,0.4f,1);
-		FLinearColor colorhit = FLinearColor(0.9f,0.4,0.4f,1);
-		
-		if(UKismetSystemLibrary::SphereTraceSingleForObjects(world,start,end,125,objectTypesArray,false,{},draw,hit,true,color,colorhit))
+		if(!enemyLocked)
 		{
-			enemyTarget = hit.GetActor();
+			enemyLocked = true;
+			UWorld* world = GetWorld();
+			FVector start = GetActorLocation();
+			FVector end = (UKismetMathLibrary::GetForwardVector(GetFollowCamera()->GetComponentRotation())*5000)+GetActorLocation();
+			TArray<TEnumAsByte<EObjectTypeQuery>> objectTypesArray; // object types to trace
+			objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel1));
+			ETraceTypeQuery trace = ETraceTypeQuery::TraceTypeQuery1;
+			auto draw = EDrawDebugTrace::None;
+			FHitResult hit = FHitResult();
+			FLinearColor color = FLinearColor(0.4f,0.5f,0.4f,1);
+			FLinearColor colorhit = FLinearColor(0.9f,0.4,0.4f,1);
+		
+			if(UKismetSystemLibrary::SphereTraceSingleForObjects(world,start,end,125,objectTypesArray,false,{},draw,hit,true,color,colorhit))
+			{
+				enemyTarget = hit.GetActor();
+				if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
+				{
+					Enemy->whiteballComponent->SetVisibility(true);
+			
+				}
+
+				GetController()->SetIgnoreLookInput(true);
+				GetCharacterMovement()->bOrientRotationToMovement = false;
+				GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	
+			}
+		
+		}else
+		{
 			if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
 			{
-				Enemy->whiteballComponent->SetVisibility(true);
 			
+				Enemy->whiteballComponent->SetVisibility(false);
 			}
-
-			GetController()->SetIgnoreLookInput(true);
-			GetCharacterMovement()->bOrientRotationToMovement = false;
-			GetCharacterMovement()->bUseControllerDesiredRotation = true;
-	
-		}
 		
-	}else
-	{
-		if(ABaseEnemy* Enemy = Cast<ABaseEnemy>(enemyTarget))
-		{
-			
-			Enemy->whiteballComponent->SetVisibility(false);
+			GetController()->ResetIgnoreLookInput();
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+			GetCharacterMovement()->bUseControllerDesiredRotation = false;
+			enemyTarget = nullptr;
+			enemyLocked = false;
 		}
-		
-		GetController()->ResetIgnoreLookInput();
-		GetCharacterMovement()->bOrientRotationToMovement = true;
-		GetCharacterMovement()->bUseControllerDesiredRotation = false;
-		enemyTarget = nullptr;
-		enemyLocked = false;
 	}
+	
 }
 
 void AMainPlayer::GetDamage(float damage)
 {
 	lifeComponent->GetDamage(damage);
-	playerWidget->SetLifeBar(lifeComponent->GetLifePercent());
+	playerWidget->LifeBar()->SetPercent(lifeComponent->GetLifePercent());
 }
 void AMainPlayer::GetHeal(float heal)
 {
 	lifeComponent->GetHeal(heal);
-	playerWidget->SetLifeBar(lifeComponent->GetLifePercent());
+	playerWidget->LifeBar()->SetPercent(lifeComponent->GetLifePercent());
 }
 
 
