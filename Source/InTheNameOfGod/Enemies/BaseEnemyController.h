@@ -69,7 +69,7 @@ private:
 
 
 	//animations
-	UAI_BaseEnemyAnimation* abpEnemy{ nullptr };
+	
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
 	TArray<UAnimMontage*> AM_Attack{ nullptr };
 	UPROPERTY(EditDefaultsOnly, Category = Animations, meta = (AllowPrivateAccess = "true"))
@@ -105,7 +105,7 @@ public:
 	void OnBeHit(float damage);
 	void CallBeginPlay() { BeginPlay(); }
 	
-	
+	UAI_BaseEnemyAnimation* abpEnemy{ nullptr };
 	
 	//tasks
 	UFUNCTION(Category = Tasks)

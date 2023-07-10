@@ -17,7 +17,7 @@ AEnemyManager::AEnemyManager()
 	PrimaryActorTick.bCanEverTick = true;
 	collisionEnter = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionEnter"));
 	collisionEnter->SetupAttachment(RootComponent);
-	collisionEnter->SetCollisionProfileName(TEXT("OverlapAll")); // Configura el perfil de colisión para permitir el solapamiento con otros actores
+	collisionEnter->SetCollisionProfileName(TEXT("OverlapAll")); // Configura el perfil de colisiï¿½n para permitir el solapamiento con otros actores
 
 	collisionEnter->OnComponentBeginOverlap.AddDynamic(this, &AEnemyManager::OnPlayerEnter);
 	collisionEnter->OnComponentEndOverlap.AddDynamic(this, &AEnemyManager::OnPlayerExit);
@@ -68,7 +68,7 @@ void AEnemyManager::SpawnEnemy()
 		if (controller)
 		{
 			controller->Possess(newEnemy);
-			controller->CallBeginPlay();
+			// controller->CallBeginPlay();
 			controller->SetEnemyManager(this);
 		}
 		newEnemy->SetActorLocation(startPos);
