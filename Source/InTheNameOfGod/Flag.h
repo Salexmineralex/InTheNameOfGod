@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Flag.generated.h"
 
 
@@ -88,7 +89,8 @@ private:
 	bool bIsOverlaping;
 	bool bIsFlagDown;
 	bool bIsFlagGoingDown;
+	bool bIsFlagLocked;
 
-	AMainPlayer* Player;
+	ACharacter* Player;
 	
 };

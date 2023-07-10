@@ -28,10 +28,11 @@ AFlag::AFlag()
     bIsFlagMoving = false;
     bIsOverlaping = false;
     bIsFlagDown= false;
-    bIsFlagGoingDown;
+    bIsFlagGoingDown= false;
+    bIsFlagLocked = false;
 
-    FVector StartFlagLocation = FlagMesh->GetComponentLocation();
-    StartFlagLocation.Z = 10.f;
+    FVector StartFlagLocation = FlagMesh->GetRelativeLocation();
+    StartFlagLocation.Z = 70.f;
     FlagMesh->SetWorldLocation(StartFlagLocation);
 }
 
@@ -39,7 +40,11 @@ AFlag::AFlag()
 void AFlag::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+    ACharacter* player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+    Player = player;
+    FVector StartFlagLocation = FlagMesh->GetRelativeLocation();
+    StartFlagLocation.Z = 70.f;
 }
 
 // Called every frame
@@ -49,35 +54,57 @@ void AFlag::Tick(float DeltaTime)
 
     if (bIsOverlaping)
     {
-        if (!bIsFlagMoving)
+        if (!bIsFlagMoving && !bIsFlagDown && !bIsFlagLocked)
         {
             StartFlagMovingDown(10.f);
+            
         }
         else
         {
             float ElapsedTime = GetWorld()->GetTimeSeconds() - StartTime;
             float Alpha = ElapsedTime / MovementDuration;
-            FVector NewLocation;
-            if (bIsFlagGoingDown)
-            {
-                NewLocation = FMath::Lerp(InitialFlagLocation, TargetFlagLocation, Alpha);
-            }
-            else
-            {
-                NewLocation = FMath::Lerp(TargetFlagLocation, InitialFlagLocation, Alpha);
-            }
-            FlagMesh->SetWorldLocation(NewLocation);
+            
+           
             if (ElapsedTime >= MovementDuration)
             {
                 bIsFlagMoving = false;
                 bIsFlagDown = true;
             }
-            if (bIsFlagDown)
+
+            if (bIsFlagGoingDown)
+            {
+                FVector NewRelativeLocation = FMath::Lerp(InitialFlagLocation, TargetFlagLocation, Alpha);
+                FVector NewWorldLocation = GetActorTransform().TransformPositionNoScale(NewRelativeLocation);
+                FlagMesh->SetWorldLocation(NewWorldLocation);
+            }
+
+            if (bIsFlagDown && !bIsFlagLocked)
             {
                 bIsFlagMoving = true;
                 StartFlagMovingUp(10.f);
+                bIsFlagLocked = true;
 
             }
+            else
+            {
+                float ElapsedTimeTwo = GetWorld()->GetTimeSeconds() - StartTime;
+                float AlphaTwo = ElapsedTime / MovementDuration;
+
+                if (ElapsedTimeTwo >= MovementDuration)
+                {
+                    bIsFlagMoving = false;
+                    bIsRaised = true;
+                }
+
+                FVector NewRelativeLocation = FMath::Lerp(TargetFlagLocation, InitialFlagLocation, Alpha);
+                FVector NewWorldLocation = GetActorTransform().TransformPositionNoScale(NewRelativeLocation);
+                FlagMesh->SetWorldLocation(NewWorldLocation);
+            }
+
+           
+               
+            
+
         }
        
     }
@@ -117,11 +144,11 @@ void AFlag::StartFlagMovingDown(float Duration)
     if (!bIsFlagMoving)
     {
         bIsFlagMoving = true;
-        FVector TargetLocation = FlagMesh->GetComponentLocation() - FVector(0.0f, 0.0f, 10);
-        InitialFlagLocation = FlagMesh->GetComponentLocation();
+        FVector TargetLocation = FlagMesh->GetRelativeLocation() + FVector(0.0f, 0.0f, 70);
+        InitialFlagLocation = FlagMesh->GetRelativeLocation();
         StartTime = GetWorld()->GetTimeSeconds();
         MovementDuration = Duration;
-        bIsFlagDown = true;
+        bIsFlagGoingDown = true;
         
     }
 }
@@ -130,8 +157,8 @@ void AFlag::StartFlagMovingUp(float Duration)
     if (!bIsFlagMoving)
     {
         bIsFlagMoving = true;
-        FVector TargetLocation = FlagMesh->GetComponentLocation() + FVector(0.0f, 0.0f, 10);
-        InitialFlagLocation = FlagMesh->GetComponentLocation();
+        FVector TargetLocation = FlagMesh->GetRelativeLocation() - FVector(0.0f, 0.0f, 70);
+        InitialFlagLocation = FlagMesh->GetRelativeLocation();
         StartTime = GetWorld()->GetTimeSeconds();
         MovementDuration = Duration;
 
