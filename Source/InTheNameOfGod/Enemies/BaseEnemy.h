@@ -57,6 +57,7 @@ private:
 public:
 	UPROPERTY(EditInstanceOnly, Category = Patrol)
 		TArray<AWayPoint*> patrolWayPoints;
+
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* visionTrigger {nullptr};
 
@@ -82,6 +83,7 @@ public:
 	USkeletalMeshComponent* GetSKMesh() { return skeletalMesh; }
 
 	void AttachEquipment();
+	void SetWayPoints(TArray<AWayPoint*> points) { patrolWayPoints = points; }
 
 
 

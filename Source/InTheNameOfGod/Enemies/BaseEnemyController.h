@@ -62,6 +62,8 @@ private:
 
 	bool haveCalledBeginPlay{ false };
 
+	TArray<AWayPoint*> myWayPoints;
+
 
 
 
@@ -93,6 +95,8 @@ private:
 public:
 	//Getters
 	bool HaveCalledBeginPlay()const { return haveCalledBeginPlay; }
+
+	void SetEnemyManager(AEnemyManager* manager) { enemyManager = manager; }
 
 	//functions
 	void SetCurrentPoint(FVector newPos) { currentPointAroundPlayer = newPos; }
