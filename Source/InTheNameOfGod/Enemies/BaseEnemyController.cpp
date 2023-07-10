@@ -138,7 +138,7 @@ void ABaseEnemyController::ChecknearbyEnemy()
 			bool hiting = GetWorld()->LineTraceSingleByChannel(*hitActor, startPos, target->GetActorLocation(), ECC_Visibility, CQP);
 			if (hiting)
 			{
-				DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), target->GetActorLocation(), FColor::Blue, true);
+				//DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), target->GetActorLocation(), FColor::Blue, true);
 
 
 			}
