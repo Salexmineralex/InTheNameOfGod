@@ -17,7 +17,7 @@ AEnemyManager::AEnemyManager()
 	PrimaryActorTick.bCanEverTick = true;
 	collisionEnter = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionEnter"));
 	collisionEnter->SetupAttachment(RootComponent);
-	collisionEnter->SetCollisionProfileName(TEXT("OverlapAll")); // Configura el perfil de colisión para permitir el solapamiento con otros actores
+	collisionEnter->SetCollisionProfileName(TEXT("OverlapAll")); // Configura el perfil de colisiï¿½n para permitir el solapamiento con otros actores
 
 	collisionEnter->OnComponentBeginOverlap.AddDynamic(this, &AEnemyManager::OnPlayerEnter);
 	collisionEnter->OnComponentEndOverlap.AddDynamic(this, &AEnemyManager::OnPlayerExit);
@@ -28,6 +28,10 @@ void AEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 	currentTime = spawnRate;
+	for (int i = 0; i < 3; i++)
+	{
+		SpawnEnemy();
+	}
 }
 
 // Called every frame
@@ -68,10 +72,11 @@ void AEnemyManager::SpawnEnemy()
 		if (controller)
 		{
 			controller->Possess(newEnemy);
-			controller->CallBeginPlay();
+			// controller->CallBeginPlay();
 			controller->SetEnemyManager(this);
 		}
-		newEnemy->SetActorLocation(startPos);
+		int randPoint = FMath::RandRange(0, wayPoints.Num() - 1);
+		newEnemy->SetActorLocation(wayPoints[randPoint]->GetActorLocation());
 		currentEnemies++;
 		currentSpawnedEnemies++;
 		if (currentSpawnedEnemies >= maxEnemiesToSpawn)

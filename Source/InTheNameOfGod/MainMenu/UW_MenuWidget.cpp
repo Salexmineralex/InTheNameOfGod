@@ -5,6 +5,8 @@
 #include "Components/Button.h"
 #include "Engine/GameEngine.h"
 #include "GameFramework/PlayerController.h"
+#include "inTheNameOfGod/MainPlayer.h"
+
 
 void UUW_MenuWidget::NativeConstruct()
 {
@@ -12,14 +14,18 @@ void UUW_MenuWidget::NativeConstruct()
 
     startGameButton->OnClicked.AddDynamic(this, &UUW_MenuWidget::StartGame);
     exitgameButton->OnClicked.AddDynamic(this, &UUW_MenuWidget::ExitGame);
+
 }
 
 
 void UUW_MenuWidget::StartGame()
 {
-	UGameplayStatics::OpenLevel(this, levelToLoad);
-    SetVisibility(ESlateVisibility::Collapsed);
+    //FName menuName = "TutorialLevel";
+	//UGameplayStatics::OpenLevel(this, menuName);
+    SetVisibility(ESlateVisibility::Hidden);
     SetIsEnabled(false);
+
+    
 }
 void UUW_MenuWidget::ExitGame()
 {

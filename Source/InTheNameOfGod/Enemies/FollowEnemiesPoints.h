@@ -16,7 +16,7 @@ struct FEnemyFinalPoint
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector pointPosition;
+	FVector pointPosition = FVector();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool isFull{ false };

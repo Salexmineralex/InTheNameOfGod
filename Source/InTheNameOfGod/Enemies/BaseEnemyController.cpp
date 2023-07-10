@@ -20,6 +20,7 @@
 #include "InTheNameOfGod/AI/WayPoint.h"
 #include "BaseEnemy.h"
 #include "FollowEnemiesPoints.h"
+#include "Components/BoxComponent.h"
 #include "InTheNameOfGod/MainPlayer.h"
 #include "InTheNameOfGod/Enemies/AI_BaseEnemyAnimation.h"
 #include "InTheNameOfGod/LifeComponent.h"
@@ -138,7 +139,7 @@ void ABaseEnemyController::ChecknearbyEnemy()
 			bool hiting = GetWorld()->LineTraceSingleByChannel(*hitActor, startPos, target->GetActorLocation(), ECC_Visibility, CQP);
 			if (hiting)
 			{
-				DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), target->GetActorLocation(), FColor::Blue, true);
+				//DrawDebugLine(GetWorld(), GetPawn()->GetActorLocation(), target->GetActorLocation(), FColor::Blue, true);
 
 
 			}
@@ -400,6 +401,8 @@ void ABaseEnemyController::Attack()
 	UAnimMontage* tempAttack = AM_Attack[randomIndex];
 	if (abpEnemy && tempAttack)
 	{
+		ABaseEnemy* mySelf = Cast<ABaseEnemy>(GetPawn());
+		mySelf->swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		abpEnemy->Montage_Play(tempAttack);
 	}
 	UBlackboardComponent* myBlackboard = BrainComponent->GetBlackboardComponent();
@@ -418,6 +421,8 @@ void ABaseEnemyController::ComboAttack()
 
 	if (abpEnemy && tempAttack)
 	{
+		ABaseEnemy* mySelf  = Cast<ABaseEnemy>(GetPawn());
+		mySelf->swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		abpEnemy->Montage_Play(tempAttack);
 	}
 

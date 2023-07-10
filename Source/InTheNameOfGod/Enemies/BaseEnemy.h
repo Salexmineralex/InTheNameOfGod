@@ -45,9 +45,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = ObjectsToSpawn)
 	TSubclassOf<class APickableObject> Mana_Potion;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* swordCollision{nullptr};
+
 	//Components
 private:
-
+	ABaseEnemyController* controller = nullptr;
 	//USceneComponent* rootComponent{ nullptr };
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* skeletalMesh {nullptr};
@@ -58,6 +61,8 @@ private:
 		UStaticMeshComponent* shieldMesh{nullptr};
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 		TSubclassOf<ABaseEnemyController> AIControllerEnemyClass;
+
+
 
 
 public:
@@ -77,19 +82,24 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"),Category =Movement)
 	float speed{ 10 };
-	
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"), Category = Movement)
+	float damage{ 10 };
 
 public:
 	UPROPERTY(VisibleAnyWhere)
 	FVector puntoDeida;
 	ACharacter* player{ nullptr };
 	UFUNCTION(CallInEditor)
-		void OnDie();
+	void OnDie();
 
+	FTimerHandle swordCollisionTimerHandle{};
+	void Recover_Sword();
 	USkeletalMeshComponent* GetSKMesh() { return skeletalMesh; }
 
 	void AttachEquipment();
 	void SetWayPoints(TArray<AWayPoint*> points) { patrolWayPoints = points; }
+	UFUNCTION()
+	void DamagePlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 

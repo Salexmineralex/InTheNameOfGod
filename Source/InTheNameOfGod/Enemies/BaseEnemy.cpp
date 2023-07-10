@@ -8,10 +8,12 @@
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 //project
+#include "AI_BaseEnemyAnimation.h"
 #include "BaseEnemyController.h"
 #include "PickableObject.h"
 #include "InTheNameOfGod/LifeComponent.h"
 #include "InTheNameOfGod/AI/WayPoint.h"
+#include "InTheNameOfGod/MainPlayer.h"
 
 
 
@@ -34,7 +36,7 @@ ABaseEnemy::ABaseEnemy()
 
 	lifeComponent = CreateDefaultSubobject<ULifeComponent>(TEXT("LifeComponent"));
 
-
+	
 	visionTrigger = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("visionTrigger"));
 	visionTrigger->SetupAttachment(RootComponent);
 	visionTrigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
@@ -43,7 +45,11 @@ ABaseEnemy::ABaseEnemy()
 
 	swordMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SwordMesh"));
 	shieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShieldMesh"));
-
+	swordCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision"));
+	swordCollision->SetupAttachment(swordMesh);
+	swordCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseEnemy::DamagePlayer);
+	swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	whiteballComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("whiteBall"));
 	whiteballComponent->SetupAttachment(RootComponent);
 	whiteballComponent->SetWidgetSpace(EWidgetSpace::Screen);
@@ -56,6 +62,7 @@ void ABaseEnemy::BeginPlay()
 	Super::BeginPlay();
 	whiteballComponent->SetVisibility(false);
 	AttachEquipment();
+	controller = Cast<ABaseEnemyController>(GetController());
 	//if (ABaseEnemyController* control = Cast<ABaseEnemyController>(GetController()))
 	//{
 	//	if (!control->HaveCalledBeginPlay())
@@ -91,6 +98,20 @@ void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(controller)
+	{
+		if(controller->abpEnemy)
+		{
+			if(!controller->abpEnemy->GetCurrentActiveMontage())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Toma Mango")));
+				swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			}
+		}
+	
+	}
+	
+
 }
 
 // Called to bind functionality to input
@@ -101,9 +122,9 @@ void ABaseEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 }
 void ABaseEnemy::OnDie()
 {
-	if (ABaseEnemyController* controller = Cast<ABaseEnemyController>(GetController()))
+	if (ABaseEnemyController* Enemycontroller = Cast<ABaseEnemyController>(GetController()))
 	{
-		controller->OnEnemyDie();
+		Enemycontroller->OnEnemyDie();
 		if(FMath::RandRange(0, 100) <= 35)
 		{
 			FActorSpawnParameters SpawnParams;
@@ -135,3 +156,17 @@ void ABaseEnemy::AttachEquipment()
 	shieldMesh->SetWorldTransform(shieldTr);
 }
 
+void ABaseEnemy::DamagePlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AMainPlayer* playerHit = Cast<AMainPlayer>(OtherActor))
+	{
+		GetWorld()->GetTimerManager().SetTimer(swordCollisionTimerHandle,this, &ABaseEnemy::Recover_Sword, 0.20f, false,0.20f);
+		swordCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		playerHit->GetDamage(damage);
+	}
+}
+
+void ABaseEnemy::Recover_Sword()
+{
+	swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
