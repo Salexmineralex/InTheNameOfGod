@@ -72,7 +72,7 @@ void AEnemyManager::SpawnEnemy()
 		if (controller)
 		{
 			controller->Possess(newEnemy);
-			// controller->CallBeginPlay();
+			 controller->CallBeginPlay();
 			controller->SetEnemyManager(this);
 		}
 		int randPoint = FMath::RandRange(0, wayPoints.Num() - 1);
