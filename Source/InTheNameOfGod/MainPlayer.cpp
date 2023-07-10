@@ -17,6 +17,8 @@
 #include "Enemies/BaseEnemy.h"
 #include "Enemies/BaseEnemyController.h"
 #include "UI/UIW_PlayerHUD.h"
+#include "InTheNameOfGod/MainMenu/UW_MenuWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -75,6 +77,16 @@ void AMainPlayer::BeginPlay()
 	playerWidget->AddToViewport();
 	playerWidget->SetLifeBar(1);
 	playerWidget->SetManaBar(0);
+
+
+	if (GetGameInstance()->GetWorld()->GetMapName() == ("UEDPIE_0_MainMenu"))
+	{
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(true);
+		mainMenuWidgetInstance = CreateWidget<UUW_MenuWidget>(GetWorld(), mainMenuWidget);
+		mainMenuWidgetInstance->AddToViewport();
+		mainMenuWidgetInstance->levelToLoad = levelToLoad;
+	}
+
 
 }
 

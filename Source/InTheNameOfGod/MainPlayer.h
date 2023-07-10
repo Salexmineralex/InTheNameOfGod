@@ -13,6 +13,8 @@
 
 class UFollowEnemiesPoints;
 class UUIW_PlayerHUD;
+class UUW_MenuWidget;
+
 
 UENUM(BlueprintType)
 enum class EAttackAnimationsCombo : uint8
@@ -76,6 +78,16 @@ public:
 	TSubclassOf<UUIW_PlayerHUD> playerWidgetType;
 	UUIW_PlayerHUD* playerWidget{ nullptr };
 
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<UUW_MenuWidget> mainMenuWidget;
+	UPROPERTY() UUW_MenuWidget* mainMenuWidgetInstance = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+		UCameraComponent* firstPersonCamera = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+		FName levelToLoad;
+
+
 #pragma region Animation
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
@@ -89,6 +101,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* buffSwordAnimationMontage= nullptr;
+
 
 	// UPROPERTY(EditAnywhere)
 	// UMaterialInstance* buffSwordMaterial;

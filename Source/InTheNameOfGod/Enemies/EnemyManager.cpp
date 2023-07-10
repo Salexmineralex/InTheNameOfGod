@@ -27,7 +27,7 @@ AEnemyManager::AEnemyManager()
 void AEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	currentTime = spawnRate;
 }
 
 // Called every frame
