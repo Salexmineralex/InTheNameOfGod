@@ -143,6 +143,6 @@ void ABaseEnemy::DamagePlayer(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
 	if (AMainPlayer* playerHit = Cast<AMainPlayer>(OtherActor))
 	{
-		playerHit->GetDamage(50);
+		playerHit->GetDamage(damage);
 	}
 }

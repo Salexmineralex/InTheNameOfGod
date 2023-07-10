@@ -80,7 +80,8 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"),Category =Movement)
 	float speed{ 10 };
-	
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"), Category = Movement)
+		float damage{ 10 };
 
 public:
 	UPROPERTY(VisibleAnyWhere)
