@@ -57,8 +57,9 @@ void AEnemyManager::SpawnEnemy()
 {
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
+	int type = FMath::RandRange(0, EnemyTyes.Num() - 1);
 
-	ABaseEnemy* newEnemy = GetWorld()->SpawnActor<ABaseEnemy>(EnemyTyes[0], startPos, FRotator::ZeroRotator, SpawnParams);
+	ABaseEnemy* newEnemy = GetWorld()->SpawnActor<ABaseEnemy>(EnemyTyes[type], startPos, FRotator::ZeroRotator, SpawnParams);
 	if (newEnemy)
 	{
 		newEnemy->SetWayPoints(SetEnemyPatrolPoints());
@@ -112,7 +113,6 @@ void AEnemyManager::OnPlayerEnter(UPrimitiveComponent* OverlappedComp, AActor* O
 	if (AMainPlayer* player = Cast<AMainPlayer>(OtherActor))
 	{
 		isPlayerIn = true;
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, "eSTOYdENTRO");
 	}
 }
 void AEnemyManager::OnPlayerExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -120,6 +120,5 @@ void AEnemyManager::OnPlayerExit(UPrimitiveComponent* OverlappedComp, AActor* Ot
 	if (AMainPlayer* player = Cast<AMainPlayer>(OtherActor))
 	{
 		isPlayerIn = false;
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Blue, "eSTOYdFUERA");
 	}
 }
