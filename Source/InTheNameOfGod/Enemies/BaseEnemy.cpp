@@ -104,7 +104,6 @@ void ABaseEnemy::Tick(float DeltaTime)
 		{
 			if(!controller->abpEnemy->GetCurrentActiveMontage())
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Toma Mango")));
 				swordCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 			}
 		}

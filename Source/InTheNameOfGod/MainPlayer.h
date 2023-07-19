@@ -221,11 +221,13 @@ public:
 	UFUNCTION(Category="Damage")
 	void DamageEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	UFUNCTION( BlueprintNativeEvent,BlueprintCallable , Category = "Animation" )
-	void StartCombo(const TArray<EAttackInputCombo> &inputsArray);
+
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION( BlueprintNativeEvent,BlueprintCallable , Category = "Animation" )
+	void StartCombo(const TArray<EAttackInputCombo> &inputsArray);
 	
 	UFUNCTION(BlueprintCallable,meta=(ExpandEnumAsExecs="input"))
 	void SelectAnimationByInput(TArray<EAttackInputCombo> inputs,UAnimMontage* montage,EAttackInputCombo& input,TArray<EAttackInputCombo>& outputInput);
