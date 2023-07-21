@@ -24,7 +24,16 @@ void UUW_MenuWidget::StartGame()
 	//UGameplayStatics::OpenLevel(this, menuName);
     SetVisibility(ESlateVisibility::Hidden);
     SetIsEnabled(false);
+    UGameEngine* GameEngine = Cast<UGameEngine>(GEngine);
+    if (GameEngine)
+    {
+        APlayerController* PlayerController = GameEngine->GetFirstLocalPlayerController(GetWorld());
 
+        if (PlayerController)
+        {
+            PlayerController->SetInputMode(FInputModeGameOnly());
+        }
+    }
     
 }
 void UUW_MenuWidget::ExitGame()
